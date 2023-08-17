@@ -1,0 +1,1224 @@
+{
+   "geometry": {
+      "main": {
+         "a": {
+            "type": "union", 
+            "children": [
+               {
+                  "y": 0.0, 
+                  "x": 0.0, 
+                  "z": 50.0, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 20.0, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 20.359496570583385, 
+                  "x": -8.991016582201015, 
+                  "z": 28.373710975516747, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 14.032947922482244, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 14.214572551137831, 
+                  "x": -0.6945813139149983, 
+                  "z": 8.07590039397192, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 11.739668171631582, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 25.635723503270526, 
+                  "x": -17.52313922933741, 
+                  "z": 13.146551644482074, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 7.20169133371658, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -9.275218487545468, 
+                  "x": 1.73587801751758, 
+                  "z": 20.57679354767084, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 13.899320840752964, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 31.147611996132653, 
+                  "x": -10.458134618343234, 
+                  "z": 2.284127271561701, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 9.879766977428947, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -14.506794791331753, 
+                  "x": -9.377586408007225, 
+                  "z": 34.647345731578106, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.110391927510552, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -1.778493139684036, 
+                  "x": 7.070639927981976, 
+                  "z": 1.9020136087353166, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 9.91913206406872, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -20.58891008509849, 
+                  "x": -3.2745981607441443, 
+                  "z": 6.697101758230531, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 7.695042102551296, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 10.564127818145476, 
+                  "x": -16.028485765283353, 
+                  "z": 17.664424433566055, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.096653428347132, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 18.096277839137407, 
+                  "x": -25.068157121733996, 
+                  "z": 0.9403136542156219, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 12.008268005961732, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -19.329746619420895, 
+                  "x": -18.696098123073792, 
+                  "z": 24.782109981356307, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 11.291635753595866, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -27.071685721562833, 
+                  "x": -9.782037068225273, 
+                  "z": 15.169912100770404, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.933095890882518, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -39.465054654072325, 
+                  "x": -16.59934861740278, 
+                  "z": 1.9189953708706469, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 15.448806091084519, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -14.111457966595903, 
+                  "x": -26.005369490475942, 
+                  "z": 9.391810546526699, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 9.527379401014768, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -11.202108175194105, 
+                  "x": -14.121431551291945, 
+                  "z": 14.112302815763549, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.879844969108662, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -1.501504971981348, 
+                  "x": -15.98530478968783, 
+                  "z": 30.671799476179945, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 8.126954090957764, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -6.397351072459054, 
+                  "x": -31.118999099111686, 
+                  "z": 0.5637154387640919, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.2629261535913425, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -20.41397491986027, 
+                  "x": -32.69292715047338, 
+                  "z": 1.0297348418439114, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.897171194190731, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -18.22764061052651, 
+                  "x": -18.134150779184992, 
+                  "z": 1.1383200788706915, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.597765895387287, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 0.13963300990072858, 
+                  "x": -18.5931204044513, 
+                  "z": 18.389262198537292, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 7.536171831691096, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -26.624780253793205, 
+                  "x": -24.646912111018946, 
+                  "z": 14.771822807894509, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.4501091189056154, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 10.810683107465838, 
+                  "x": -15.895922471328719, 
+                  "z": 10.35255681087012, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.220570817869808, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -6.397739856558302, 
+                  "x": -20.73299914893052, 
+                  "z": 1.1160310291240094, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.954121419006506, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 1.433731305175025, 
+                  "x": -25.005760724190324, 
+                  "z": 10.805942138468566, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.478986150168957, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -23.00566031508714, 
+                  "x": 13.68140042955749, 
+                  "z": 6.17414514559006, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 12.309660598983113, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 4.645734660937081, 
+                  "x": -15.014775354382666, 
+                  "z": 3.1913152606597635, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 7.2697605846955895, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 3.303985054290389, 
+                  "x": -27.518910036831535, 
+                  "z": 3.3291476796447697, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.627568230898704, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 29.76870793013113, 
+                  "x": -6.78946402005014, 
+                  "z": 14.948725337912641, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.508222878353831, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 0.8673618863836374, 
+                  "x": -7.006977591419158, 
+                  "z": 10.054856736480303, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.130670794565443, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 14.863099527771466, 
+                  "x": 13.426256958016337, 
+                  "z": 31.04932574193328, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 10.573613443117589, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 7.150496747839997, 
+                  "x": 18.811853055757936, 
+                  "z": 19.949988011526273, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.975757162604596, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 4.2235647967788825, 
+                  "x": -9.995686717370813, 
+                  "z": 24.655448171973447, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.112598219813748, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 10.41307257754887, 
+                  "x": 30.378570083615692, 
+                  "z": 4.265284061950354, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 15.783880532276793, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 5.0124809143671785, 
+                  "x": 12.697032896773058, 
+                  "z": 13.21591900462397, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.368215368959829, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 25.531708042654692, 
+                  "x": 18.29991490927658, 
+                  "z": 20.198989714881222, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 8.404544816508734, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 30.562379737000693, 
+                  "x": 11.128830568828459, 
+                  "z": 11.82380745014676, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.7146872664921124, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 29.230187195869494, 
+                  "x": 12.862843231172274, 
+                  "z": 0.05358036140858502, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 8.256936792100781, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -10.399497576019783, 
+                  "x": -9.988787980617584, 
+                  "z": 5.835148636736669, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.406392587594547, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -4.9930376189332435, 
+                  "x": 15.848472598227177, 
+                  "z": 33.021621473235456, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.756469555869186, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -2.500079741926785, 
+                  "x": 21.689798575580948, 
+                  "z": 26.863010934572703, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.090248022824307, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -3.668793554770529, 
+                  "x": 24.870524908178275, 
+                  "z": 18.494807910419144, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.93802611084391, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -7.696989237725956, 
+                  "x": 26.049779239244526, 
+                  "z": 10.465109806680672, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.122495555964267, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 31.721279270343345, 
+                  "x": 26.010478315770627, 
+                  "z": 10.063193658916234, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 8.755184761287296, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -13.075498303773422, 
+                  "x": 28.807160649417426, 
+                  "z": 2.3503812578339165, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 7.995821074591944, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 16.784141117783637, 
+                  "x": 10.42764907547399, 
+                  "z": 18.502007168510588, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.4692870551136075, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 39.981280752345675, 
+                  "x": 23.470121069219832, 
+                  "z": 1.7730759470221216, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.220085218961344, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -13.687403590336027, 
+                  "x": 8.42933327032687, 
+                  "z": 34.873436450345174, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.072870253973063, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -26.223436203064388, 
+                  "x": -30.098592204695972, 
+                  "z": 9.228849158874453, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.334905316827977, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 36.98859559821321, 
+                  "x": 32.831846698506176, 
+                  "z": 2.4309449817728677, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.756848411900892, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 5.279938815377595, 
+                  "x": 4.383634417378213, 
+                  "z": 28.53184571819015, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.538315218022493, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 19.7610125404769, 
+                  "x": 14.787568173395973, 
+                  "z": 11.458745903344301, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.64214555015836, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -29.695646826669048, 
+                  "x": -34.09378585994926, 
+                  "z": 2.9582285338900363, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.871098703408007, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -1.298409218146968, 
+                  "x": -6.246158719720328, 
+                  "z": 1.3180316578709608, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.902685297550596, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 7.160068714456646, 
+                  "x": 8.589371455554197, 
+                  "z": 21.85181968463197, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.361851865440132, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -8.617369425783604, 
+                  "x": 17.342483249248794, 
+                  "z": 24.915410326918817, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.247890944476261, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 5.499532417607891, 
+                  "x": -5.1952370330733615, 
+                  "z": 19.090235011336798, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.346892919948997, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -13.268163008053513, 
+                  "x": 21.28104123047371, 
+                  "z": 19.1845465782193, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.117808023482825, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 35.77197726851203, 
+                  "x": 6.755184412361295, 
+                  "z": 6.315828815400657, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.0378275597237545, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 41.54407727888795, 
+                  "x": 10.03777889026978, 
+                  "z": 0.19577360083437867, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.99254568093008, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -9.143455297848593, 
+                  "x": 16.93114045241668, 
+                  "z": 12.9076992357299, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.561688680501877, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -17.0035997727175, 
+                  "x": 12.97044610467769, 
+                  "z": 29.881950077363115, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.446025882163728, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -16.711551094885063, 
+                  "x": 26.732533091855256, 
+                  "z": 12.969880130824059, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.837512410964113, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -14.374822842025765, 
+                  "x": 1.8067411691591264, 
+                  "z": 0.14079602522446066, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.669321578581725, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -21.654789645057733, 
+                  "x": 16.350651190306557, 
+                  "z": 23.31791386543084, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 6.280137366425528, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -7.290719826534886, 
+                  "x": 19.962601557532366, 
+                  "z": 5.713992917629049, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.461514903452437, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -4.5551333989537675, 
+                  "x": -18.68219219574002, 
+                  "z": 9.731024505147587, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.313388837341109, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 18.765588491780548, 
+                  "x": 12.596903511816498, 
+                  "z": 3.7862684971399005, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.398799061324371, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": -21.82223976223847, 
+                  "x": -14.829197546122185, 
+                  "z": 9.028832452400536, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.592835613024804, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }, 
+               {
+                  "y": 27.641866173417796, 
+                  "x": 1.440272281394126, 
+                  "z": 17.884326602805295, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "r": 5.455589881293256, 
+                           "type": "sphere", 
+                           "stacks": 8, 
+                           "slices": 16
+                        }
+                     ]
+                  }
+               }
+            ]
+         }, 
+         "b": {
+            "type": "union", 
+            "children": [
+               {
+                  "y": 0.0, 
+                  "x": 0.0, 
+                  "z": -500.0, 
+                  "type": "translate", 
+                  "children": {
+                     "type": "union", 
+                     "children": [
+                        {
+                           "y": 1000.0, 
+                           "x": 1000.0, 
+                           "z": 1000.0, 
+                           "type": "box"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }, 
+         "type": "difference"
+      }
+   }
+}
