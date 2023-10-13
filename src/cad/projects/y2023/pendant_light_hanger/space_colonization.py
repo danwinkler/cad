@@ -333,8 +333,8 @@ def test():
         if node.parent:
             skeleton.append(
                 (
-                    (node.position.x, node.position.y, 1000),
-                    (node.parent.position.x, node.parent.position.y, 1000),
+                    (node.position.x, node.position.y, 10000),
+                    (node.parent.position.x, node.parent.position.y, 10000),
                 )
             )
 
@@ -345,7 +345,7 @@ def test():
 
     print("Skeletonizing")
     polys = skeleton_to_polys(
-        skeleton, im_scale=8.0, blur=11, margin=20, threshold=15, debug_image=False
+        skeleton, im_scale=8.0, blur=45, margin=30, threshold=8, debug_image=False
     )
 
     model = Model()

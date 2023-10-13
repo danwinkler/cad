@@ -85,7 +85,7 @@ def get_text_polygon(text):
 
 
 def hole_size_test():
-    hole_sizes = [4, 4.4, 4.5, 4.6, 5.0]
+    hole_sizes = [5.9, 6.0, 6.1, 6.2, 6.3]
 
     margin = 5
     max_hole_size = max(hole_sizes)
@@ -109,8 +109,6 @@ def hole_size_test():
             origin=(0, 0),
         )
 
-        # TODO: what I really want here is to add the text to a separate layer/group which will then be engraved instead of cut
-        # To do this I need another primitive beside Polygon I think
         text = translate(
             text_poly_scaled,
             x_pos - text_poly_scaled.bounds[0] - text_poly_scaled.bounds[2] / 2,
@@ -127,7 +125,7 @@ def hole_size_test():
 
 
 def fit_test_a():
-    slot_sizes = [2.9, 3.0, 3.1]
+    slot_sizes = [4.8, 4.9, 5.0, 5.1, 5.2]
 
     margin = 5
     max_slot_size = max(slot_sizes)
@@ -137,23 +135,51 @@ def fit_test_a():
     width = slot_interval * (len(slot_sizes) + 1)
 
     base = box(0, 0, width, height)
-
+    engrave_polys = []
+    text_scale = 0.002
     for i, slot_size in enumerate(slot_sizes):
+        x_pos = slot_interval * (i + 1)
         base -= translate(
             box(0, 0, slot_size, slot_height),
-            slot_interval * (i + 1),
+            x_pos - slot_size / 2,
             height - slot_height,
         )
 
-    return base
+        text_poly_scaled = scale(
+            get_text_polygon(str(slot_size)),
+            text_scale,
+            text_scale,
+            text_scale,
+            origin=(0, 0),
+        )
+
+        text = translate(
+            text_poly_scaled,
+            x_pos - text_poly_scaled.bounds[0] - text_poly_scaled.bounds[2] / 2,
+            1,
+        )
+
+        engrave_polys.append(text)
+
+    model = Model()
+
+    # TODO: these translate only apply to the scad visualizer, not the dxf
+    # As such they really should be moved to multimodel.add_model, which doesn't currently support that
+    model.add_poly(base, translate=(0, 30, 0))
+    model.add_poly(
+        unary_union(engrave_polys),
+        color="red",
+        thickness=6,
+        layer="text",
+        translate=(0, 30, 0),
+    )
+
+    return model
 
 
 model.add_model(hole_size_test())
 
-model.add_part(
-    fit_test_a(),
-    translate=(0, 30, 0),
-)
+model.add_model(fit_test_a())
 
 top_level_geom = model.render_full()
 
