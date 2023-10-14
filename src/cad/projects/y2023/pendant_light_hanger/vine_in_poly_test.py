@@ -190,7 +190,7 @@ model.add_model(
 
 top_level_geom = model.render_full()
 
-model.render_single_svg(__file__ + ".svg")
+# model.render_single_svg(__file__ + ".svg")
 model.render_single_dxf(__file__ + ".dxf")
 
 print("Saving File")

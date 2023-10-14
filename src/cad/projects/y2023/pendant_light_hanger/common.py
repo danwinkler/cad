@@ -123,14 +123,16 @@ def skeleton_to_polys(
             x, y = map(int, point)
             image[y, x] = color_value
 
-    # cv2.imshow("image", image)
-    # cv2.waitKey(0)
+    if debug_image:
+        cv2.imshow("image", image)
+        cv2.waitKey(0)
 
     # Blur
     blurred_image = cv2.GaussianBlur(image, (blur, blur), 0)
 
-    # cv2.imshow("blurred_image", blurred_image)
-    # cv2.waitKey(0)
+    if debug_image:
+        cv2.imshow("blurred_image", blurred_image)
+        cv2.waitKey(0)
 
     # Threshold
     _, threshold_image = cv2.threshold(blurred_image, threshold, 255, cv2.THRESH_BINARY)
@@ -401,3 +403,36 @@ class MultipartModel:
             next_x += model.width + 1
 
         doc.saveas(output_path)
+
+    def render_dxfs(self, output_path):
+        output_path.mkdir(parents=True, exist_ok=True)
+        for i, model in enumerate(self.models):
+            doc = ezdxf.new("R2010")
+
+            doc.units = ezdxf.units.MM
+
+            msp = doc.modelspace()
+
+            for part in model.parts:
+                if isinstance(part.polygon, Polygon):
+                    polygons = [part.polygon]
+                elif isinstance(part.polygon, MultiPolygon):
+                    polygons = part.polygon.geoms
+
+                for polygon in polygons:
+                    msp.add_lwpolyline(
+                        list(polygon.exterior.coords),
+                        dxfattribs={
+                            "layer": part.layer,
+                        },
+                    )
+
+                    for interior in polygon.interiors:
+                        msp.add_lwpolyline(
+                            list(interior.coords),
+                            dxfattribs={
+                                "layer": part.layer,
+                            },
+                        )
+
+            doc.saveas(output_path / f"part_{i}.dxf")

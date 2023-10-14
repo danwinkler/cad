@@ -20,6 +20,9 @@ from cad.projects.y2023.pendant_light_hanger.common import (
     s_poly_to_scad,
     skeleton_to_polys,
 )
+from cad.projects.y2023.pendant_light_hanger.honeycomb import (
+    get_honeycomb_structure_for_poly,
+)
 
 random.seed(0)
 
@@ -31,31 +34,30 @@ board_thickness = 5
 tab_height = 10
 tab_depth = 12
 tab_overhang = 10
+hole_radius = 6.2
+segments = 32
 
 
-def arch(notch=False):
+def arch_func(i):
+    p = i / segments
+    a = (i / segments) * math.pi * 0.5
+    return (
+        600 - math.cos(a) * 600,
+        math.sin(a) * 600,
+        10000 - (9000 * p),
+    )
+
+
+def basic_arch_shape(n_segments):
     lines = []
 
-    def lineFunc(i):
-        p = i / segments
-        a = (i / segments) * math.pi * 0.5
-        return (
-            600 - math.cos(a) * 600,
-            math.sin(a) * 600,
-            10000 - (9000 * p),
-        )
-
-    segments = 32
-    for i in range(segments):
+    for i in range(n_segments):
         lines.append(
             (
-                lineFunc(i),
-                lineFunc(i + 1),
+                arch_func(i),
+                arch_func(i + 1),
             )
         )
-
-        if notch and i > segments - 3:
-            break
 
     polys = skeleton_to_polys(lines, im_scale=3.0, blur=201, margin=100, threshold=8)
 
@@ -67,6 +69,14 @@ def arch(notch=False):
 
     # Make it flat against the wall
     poly -= box(-50, -20, 0, 200)
+
+    return poly
+
+
+def arch(notch=False, interior_structure=False):
+    poly = basic_arch_shape(segments - 2 if notch else segments)
+
+    rim_size = 5
 
     # If notch, cut out a slot for the wire
     if notch:
@@ -82,6 +92,36 @@ def arch(notch=False):
 
         # 3. subtract edge_poly from poly
         poly -= edge_poly
+
+    outer_outline = poly
+
+    # Apply internal structure
+    if interior_structure:
+        # int_skeleton = []
+        # for i in range(len(poly.exterior.coords)):
+        #     a = poly.exterior.coords[i]
+        #     b = poly.exterior.coords[(i + 1) % len(poly.exterior.coords)]
+        #     int_skeleton += [((a[0], a[1], 10000), (b[0], b[1], 10000))]
+
+        # int_poly = skeleton_to_polys(
+        #     int_skeleton, im_scale=5.0, blur=39, margin=100, threshold=8
+        # )[0]
+
+        # int_poly = shapelysmooth.taubin_smooth(int_poly, 0.2, 0.2, 5)
+
+        # basic_cutout = unary_union([interior_structure, int_poly])
+
+        # poly = poly - interior_structure
+        # rim = outer_outline - outer_outline.buffer(-rim_size)
+        # poly = unary_union([poly, rim])
+
+        # Remove any holes that are too small
+        # min_area = 5
+        # poly = Polygon(
+        #     poly.exterior.coords,
+        #     [i for i in poly.interiors if Polygon(i).area > min_area],
+        # )
+        pass
 
     # Tabs
     if not notch:
@@ -104,9 +144,6 @@ def arch(notch=False):
 
         poly = unary_union([poly] + tabs)
 
-    # Registration holes
-    hole_radius = 5
-
     # Along line segments
     hole_indicies = [
         5,
@@ -117,7 +154,12 @@ def arch(notch=False):
     ]
 
     for i in hole_indicies:
-        x, y, v = lineFunc(i)
+        x, y, v = arch_func(i)
+
+        poly = unary_union(
+            [poly, Point(x, y).buffer(hole_radius * 2).intersection(outer_outline)]
+        )
+
         poly -= Point(x, y).buffer(hole_radius)
 
     # Finally, split the poly into n parts such that it will fit on the build plate.
@@ -133,8 +175,8 @@ def arch(notch=False):
         end = split_points[i + 1]
 
         def get_cut(i, side):
-            a = lineFunc(i)
-            b = lineFunc(i + 1)
+            a = arch_func(i)
+            b = arch_func(i + 1)
             av = euclid3.Vector2(*a[:2])
             bv = euclid3.Vector2(*b[:2])
             v = bv - av
@@ -151,8 +193,8 @@ def arch(notch=False):
             return cut_poly
 
         def get_connector(i, side):
-            a = lineFunc(i)
-            b = lineFunc(i + 1)
+            a = arch_func(i)
+            b = arch_func(i + 1)
             av = euclid3.Vector2(*a[:2])
             bv = euclid3.Vector2(*b[:2])
             v = bv - av
@@ -163,7 +205,7 @@ def arch(notch=False):
             cross_size = 4
             cross_strength = 1000
             pa = av + v * line_size
-            pb = av - v * line_size
+            pb = av - v * line_size * 0.5
 
             lines = [
                 # This part goes along the arch
@@ -181,18 +223,18 @@ def arch(notch=False):
                         cross_strength,
                     ),
                 ),
-                (
-                    (
-                        pb.x + cross.x * cross_size,
-                        pb.y + cross.y * cross_size,
-                        cross_strength,
-                    ),
-                    (
-                        pb.x - cross.x * cross_size,
-                        pb.y - cross.y * cross_size,
-                        cross_strength,
-                    ),
-                ),
+                # (
+                #     (
+                #         pb.x + cross.x * cross_size,
+                #         pb.y + cross.y * cross_size,
+                #         cross_strength,
+                #     ),
+                #     (
+                #         pb.x - cross.x * cross_size,
+                #         pb.y - cross.y * cross_size,
+                #         cross_strength,
+                #     ),
+                # ),
             ]
             con_poly = skeleton_to_polys(
                 lines, im_scale=2, blur=21, margin=200, threshold=2, debug_image=False
@@ -203,13 +245,50 @@ def arch(notch=False):
             return con_poly
 
         our_poly = poly
+        # CUT
         if start is not None:
             our_poly = poly - get_cut(start, -1)
-            our_poly = our_poly - get_connector(start, -1)
 
         if end is not None:
             our_poly = our_poly - get_cut(end, 1)
+
+        # RIM
+        exterior_poly = Polygon(our_poly.exterior)
+        rim = exterior_poly - exterior_poly.buffer(-rim_size)
+        our_poly = unary_union([our_poly, rim])
+        our_poly -= interior_structure - rim
+
+        # Connector
+        if start is not None:
+            connector = get_connector(start, -1)
+            our_poly = unary_union(
+                [our_poly, connector.buffer(5).intersection(exterior_poly)]
+            )
+            our_poly = our_poly - connector
+
+        if end is not None:
             our_poly = unary_union([our_poly, get_connector(end, 1)])
+
+        # Finally add the holes one more time (we probably stuck something in there)
+        for i in hole_indicies:
+            x, y, v = arch_func(i)
+
+            if exterior_poly.contains(Point(x, y)):
+                our_poly = unary_union(
+                    [
+                        our_poly,
+                        Point(x, y).buffer(hole_radius * 2).intersection(outer_outline),
+                    ]
+                )
+
+                our_poly -= Point(x, y).buffer(hole_radius)
+
+        # Remove any holes that are too small
+        min_area = 5
+        our_poly = Polygon(
+            our_poly.exterior.coords,
+            [i for i in our_poly.interiors if Polygon(i).area > min_area],
+        )
 
         polys.append(our_poly)
 
@@ -254,9 +333,20 @@ model = MultipartModel(default_thickness=board_thickness)
 expanded = True
 expand_amount = 10 if expanded else 1
 
+# interior arch structure
+arch_poly = basic_arch_shape(segments)
+cutout = get_honeycomb_structure_for_poly(
+    arch_poly,
+    honeycomb_regions=300,
+    region_min=5,
+    region_max=10,
+    honeycomb_scale=14,
+    wall_offset=-2.0,
+)
+
 # Main arch
 for i in range(4):
-    arch_parts = arch(notch=i in [1, 2])
+    arch_parts = arch(notch=i in [1, 2], interior_structure=cutout)
     for j, arch_part in enumerate(arch_parts):
         model.add_part(
             polygon=arch_part,
@@ -284,11 +374,13 @@ for i in range(3):
 
 top_level_geom = model.render_full()
 
-output_dir = pathlib.Path(__file__).stem + "_parts"
+output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_parts")
 # model.render_parts(output_dir)
 # model.render_svgs(output_dir)
 
-model.render_single_svg(__file__ + ".svg")
+# model.render_single_svg(__file__ + ".svg")
+model.render_single_dxf(__file__ + ".dxf")
+model.render_dxfs(output_dir)
 
 print("Saving File")
 with open(__file__ + ".scad", "w") as f:
