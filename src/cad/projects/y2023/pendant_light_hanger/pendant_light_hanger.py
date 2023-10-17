@@ -330,7 +330,7 @@ def backplate(latch=True):
 
 model = MultipartModel(default_thickness=board_thickness)
 
-expanded = True
+expanded = False
 expand_amount = 10 if expanded else 1
 
 # interior arch structure

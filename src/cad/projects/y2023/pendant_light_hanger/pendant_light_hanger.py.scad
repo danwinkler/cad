@@ -74,7 +74,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.6000000000, 0]) {
-		translate(v = [10, 0, 10]) {
+		translate(v = [0, 0, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -145,7 +145,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.7000000000, 0]) {
-		translate(v = [20, 0, 20]) {
+		translate(v = [0, 0, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -186,7 +186,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.6000000000, 0]) {
-		translate(v = [0, 50, 0]) {
+		translate(v = [0, 5, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -233,7 +233,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.7000000000, 0]) {
-		translate(v = [10, 50, 10]) {
+		translate(v = [0, 5, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -294,7 +294,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.6000000000, 0]) {
-		translate(v = [20, 50, 20]) {
+		translate(v = [0, 5, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -336,7 +336,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.7000000000, 0]) {
-		translate(v = [0, 100, 0]) {
+		translate(v = [0, 10, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -383,7 +383,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.6000000000, 0]) {
-		translate(v = [10, 100, 10]) {
+		translate(v = [0, 10, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -444,7 +444,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.7000000000, 0]) {
-		translate(v = [20, 100, 20]) {
+		translate(v = [0, 10, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -486,7 +486,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.6000000000, 0]) {
-		translate(v = [0, 150, 0]) {
+		translate(v = [0, 15, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -558,7 +558,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.7000000000, 0]) {
-		translate(v = [10, 150, 10]) {
+		translate(v = [0, 15, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -629,7 +629,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.6000000000, 0]) {
-		translate(v = [20, 150, 20]) {
+		translate(v = [0, 15, 0]) {
 			rotate(a = 90, v = [1, 0, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -670,7 +670,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.7000000000, 0]) {
-		translate(v = [-10, 5, 0]) {
+		translate(v = [-1, 5, 0]) {
 			rotate(a = -90, v = [0, 1, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -691,7 +691,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.6000000000, 0]) {
-		translate(v = [-60, 5, 0]) {
+		translate(v = [-6, 5, 0]) {
 			rotate(a = -90, v = [0, 1, 0]) {
 				linear_extrude(height = 5) {
 					union() {
@@ -709,7 +709,7 @@ union() {
 		}
 	}
 	color(alpha = 1.0000000000, c = [0.7000000000, 0.7000000000, 0]) {
-		translate(v = [-110, 5, 0]) {
+		translate(v = [-11, 5, 0]) {
 			rotate(a = -90, v = [0, 1, 0]) {
 				linear_extrude(height = 5) {
 					union() {
