@@ -57,7 +57,7 @@ class Shelf:
     def wood_thickness_tab_hole_size(self):
         # This is so if we need to adjust the size of the hole separately from the wood_thickness variable
         # Ex. for kerf adjustment
-        return self.wood_thickness
+        return self.wood_thickness - 0.2
 
     def wall_piece_x_pos(self, idx):
         usable_space = self.shelf_width - 2 * self.wall_piece_margin
@@ -404,7 +404,7 @@ class Shelf:
         return m
 
     def get_multi_model(self):
-        model = MultipartModel()
+        model = MultipartModel(default_thickness=self.wood_thickness)
 
         # These are hand picked for ones that look nice lol
         support_seeds = [0, 2, 3, 5, 7]
