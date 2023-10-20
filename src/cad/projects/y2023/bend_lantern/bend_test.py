@@ -29,67 +29,105 @@ class Structure:
     def __init__(self):
         # Global settings
         self.wood_thickness = 5
+        self.tab_width = 10
+        self.n_rows = 18
+        self.diamond_height = 22
+        self.diamond_width = 1.5
+        self.diamond_y_spacing = 3
+        self.diamond_x_spacing = 0.8
+        self.margin = 20
 
     def wood_thickness_tab_hole_size(self):
         # This is so if we need to adjust the size of the hole separately from the wood_thickness variable
         # Ex. for kerf adjustment
         return self.wood_thickness - 0.2
 
+    def center_section_width(self):
+        return self.n_rows * (self.diamond_width + self.diamond_x_spacing)
+
+    def total_width(self):
+        return self.center_section_width() + 2 * self.margin
+
     def bend_test_model(
         self,
-        n_rows=15,
-        diamond_height=22,
-        diamond_width=1,
-        diamond_y_spacing=3,
-        diamond_x_spacing=1,
     ):
         m = Model()
 
-        margin = 20
-        center_section_width = n_rows * (diamond_width + diamond_x_spacing)
-        total_width = center_section_width + 2 * margin
+        main = box(0, 0, self.total_width(), 50)
 
-        main = box(0, 0, total_width, 50)
+        start = Point(self.margin, 25)
 
-        start = Point(margin, 25)
-
-        for i in range(n_rows):
+        for i in range(self.n_rows):
             for j in range(-2, 3):
-                y = start.y + j * (diamond_height + diamond_y_spacing)
+                y = start.y + j * (self.diamond_height + self.diamond_y_spacing)
                 if i % 2 == 0:
-                    y += diamond_height / 2
+                    y += self.diamond_height / 2
 
-                x = start.x + i * (diamond_width + diamond_x_spacing)
+                x = start.x + i * (self.diamond_width + self.diamond_x_spacing)
 
                 diamond = Polygon(
                     [
                         (x, y),
-                        (x + diamond_width / 2, y + diamond_height / 2),
-                        (x + diamond_width, y),
-                        (x + diamond_width / 2, y - diamond_height / 2),
+                        (x + self.diamond_width / 2, y + self.diamond_height / 2),
+                        (x + self.diamond_width, y),
+                        (x + self.diamond_width / 2, y - self.diamond_height / 2),
                     ]
                 )
 
                 main = main.difference(diamond)
 
+        main = unary_union(
+            [
+                main,
+                box(0, -self.wood_thickness, self.tab_width, 0),
+                box(
+                    self.total_width() - self.tab_width,
+                    -self.wood_thickness,
+                    self.total_width(),
+                    0,
+                ),
+            ]
+        )
+
         m.add_poly(main)
+
+        return m
+
+    def bottom_model(self):
+        m = Model()
+
+        tab_0 = box(-self.tab_width, -self.wood_thickness_tab_hole_size(), 0, 0)
+
+        quarter_circumference = self.center_section_width()
+        radius = quarter_circumference / (math.pi * 0.5)
+
+        tab_1_x = (self.margin - self.tab_width) + radius
+        tab_1_y = (self.margin - self.tab_width) + radius
+
+        tab_1 = box(
+            tab_1_x,
+            tab_1_y,
+            tab_1_x + self.wood_thickness_tab_hole_size(),
+            tab_1_y + self.tab_width,
+        )
+
+        holes = unary_union([tab_0, tab_1])
+        outline = Polygon(holes.convex_hull.boundary).buffer(3)
+
+        part = outline - holes
+
+        m.add_poly(part)
 
         return m
 
     def get_multi_model(self):
         model = MultipartModel(default_thickness=self.wood_thickness)
 
-        bend_settings = [
-            {},
-            {"diamond_height": 44},
-            {"diamond_width": 2},
-            {"diamond_width": 2, "diamond_height": 44},
-        ]
+        model.add_model(self.bend_test_model())
 
-        for i, settings in enumerate(bend_settings):
-            m = self.bend_test_model(**settings)
-            m.translate = (0, i * 60)
-            model.add_model(m)
+        bottom = self.bottom_model()
+        bottom.translate = (100, 0)
+        model.add_model(bottom)
 
         return model
 
