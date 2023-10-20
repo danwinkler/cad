@@ -451,6 +451,8 @@ output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_pa
 model.render_single_dxf(__file__ + ".dxf")
 model.render_dxfs(output_dir)
 
+print(f"Total Cut Length: {model.get_total_cut_length()}")
+
 print("Saving File")
 with open(__file__ + ".scad", "w") as f:
     f.write(solid.scad_render(top_level_geom))

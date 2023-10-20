@@ -234,12 +234,12 @@ class Part:
 
 
 class Model:
-    def __init__(self, part=None, default_thickness=5):
+    def __init__(self, part=None, thickness=None):
         if part:
             self.parts = [part]
         else:
             self.parts = []
-        self.default_thickness = default_thickness
+        self.thickness = thickness
         self.rotate = None
         self.translate = None
         self.thickness = None
@@ -257,7 +257,7 @@ class Model:
         self.parts.append(
             Part(
                 polygon=polygon,
-                thickness=thickness or self.default_thickness,
+                thickness=thickness or self.thickness,
                 translate=translate,
                 rotate=rotate,
                 color=color,
@@ -309,9 +309,8 @@ class MultipartModel:
         scad_polys = []
         for model in self.models:
             for part in model.parts:
-                poly = solid.linear_extrude(part.thickness)(
-                    s_poly_to_scad(part.polygon)
-                )
+                thickness = part.thickness or model.thickness or self.default_thickness
+                poly = solid.linear_extrude(thickness)(s_poly_to_scad(part.polygon))
                 if model.rotate:
                     poly = solid.rotate(model.rotate[1], model.rotate[0])(poly)
 
@@ -449,3 +448,20 @@ class MultipartModel:
                         )
 
             doc.saveas(output_path / f"part_{i}.dxf")
+
+    def get_total_cut_length(self):
+        total = 0
+
+        for model in self.models:
+            for part in model.parts:
+                if isinstance(part.polygon, Polygon):
+                    polygons = [part.polygon]
+                elif isinstance(part.polygon, MultiPolygon):
+                    polygons = part.polygon.geoms
+
+                for polygon in polygons:
+                    total += polygon.exterior.length
+                    for interior in polygon.interiors:
+                        total += interior.length
+
+        return total
