@@ -61,7 +61,7 @@ class Structure:
             for j in range(-2, 3):
                 y = start.y + j * (self.diamond_height + self.diamond_y_spacing)
                 if i % 2 == 0:
-                    y += self.diamond_height / 2
+                    y += (self.diamond_height + self.diamond_y_spacing) / 2
 
                 x = start.x + i * (self.diamond_width + self.diamond_x_spacing)
 
@@ -93,7 +93,7 @@ class Structure:
 
         return m
 
-    def bottom_model(self):
+    def bottom_model(self, wood_thickness_curve_offset_factor=0):
         m = Model()
 
         tab_0 = box(-self.tab_width, -self.wood_thickness_tab_hole_size(), 0, 0)
@@ -101,8 +101,16 @@ class Structure:
         quarter_circumference = self.center_section_width()
         radius = quarter_circumference / (math.pi * 0.5)
 
-        tab_1_x = (self.margin - self.tab_width) + radius
-        tab_1_y = (self.margin - self.tab_width) + radius
+        tab_1_x = (
+            (self.margin - self.tab_width)
+            + radius
+            - wood_thickness_curve_offset_factor * self.wood_thickness
+        )
+        tab_1_y = (
+            (self.margin - self.tab_width)
+            + radius
+            - wood_thickness_curve_offset_factor * self.wood_thickness
+        )
 
         tab_1 = box(
             tab_1_x,
@@ -112,6 +120,12 @@ class Structure:
         )
 
         holes = unary_union([tab_0, tab_1])
+
+        n_markers = {0: 1, 0.5: 2, 1: 3}[wood_thickness_curve_offset_factor]
+        for i in range(n_markers):
+            marker = Point(10 + i * 5, 10 + i * 5).buffer(2)
+            holes = holes.union(marker)
+
         outline = Polygon(holes.convex_hull.boundary).buffer(3)
 
         part = outline - holes
@@ -125,9 +139,10 @@ class Structure:
 
         model.add_model(self.bend_test_model())
 
-        bottom = self.bottom_model()
-        bottom.translate = (100, 0)
-        model.add_model(bottom)
+        for i, v in enumerate([0, 0.5, 1]):
+            bottom = self.bottom_model(wood_thickness_curve_offset_factor=v)
+            bottom.translate = (100 + i * 50, 0)
+            model.add_model(bottom)
 
         return model
 
