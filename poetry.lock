@@ -916,6 +916,17 @@ PrettyTable = "0.7.2"
 pypng = ">=0.0.19,<0.0.20"
 
 [[package]]
+name = "svgwrite"
+version = "1.4.3"
+description = "A Python library to create SVG drawings."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "svgwrite-1.4.3-py3-none-any.whl", hash = "sha256:bb6b2b5450f1edbfa597d924f9ac2dd099e625562e492021d7dd614f65f8a22d"},
+    {file = "svgwrite-1.4.3.zip", hash = "sha256:a8fbdfd4443302a6619a7f76bc937fc683daf2628d9b737c891ec08b8ce524c3"},
+]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -960,4 +971,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10,<3.13"
-content-hash = "029a389dfd5edf98f5a4b6f7a194342475741fd4aa9a90fa46b2d56b9976178b"
+content-hash = "e898d08009cb2d1799bc0b1c7d5f48782bbd5122f4f0ebaad2b3946bc61ba91d"

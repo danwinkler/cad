@@ -10,9 +10,12 @@ import ezdxf
 import ezdxf.units
 import numpy as np
 import solid
+import svgwrite
+import svgwrite.shapes
+from fontTools.ttLib import TTFont
 from shapely import affinity as shapely_affinity
 from shapely import ops as shapely_ops
-from shapely.geometry import MultiPolygon, Polygon
+from shapely.geometry import LinearRing, MultiPolygon, Polygon
 
 
 def s_poly_to_scad(s_poly):
@@ -277,6 +280,10 @@ class Model:
     def width(self):
         return self.maxx - self.minx
 
+    @property
+    def layers(self):
+        return list(set([part.layer for part in self.parts]))
+
 
 class MultipartModel:
     def __init__(self, default_thickness=5):
@@ -378,7 +385,7 @@ class MultipartModel:
         doc.units = ezdxf.units.MM
 
         for layer in self.layers:
-            doc.layers.new(name=layer)
+            doc.layers.add(name=layer)
 
         msp = doc.modelspace()
 
@@ -417,13 +424,26 @@ class MultipartModel:
         doc.saveas(output_path)
 
     def render_dxfs(self, output_path):
+        """
+        So XTool's software doesn't really like DXF layers, but works great with "layers" specified by color, which it then converts into
+        its own layer representation. So we'll just use colors to represent layers.
+        """
         output_path.mkdir(parents=True, exist_ok=True)
         for i, model in enumerate(self.models):
-            doc = ezdxf.new("R2010")
+            doc = ezdxf.new("R2018")
 
             doc.units = ezdxf.units.MM
 
             msp = doc.modelspace()
+
+            layer_to_color = {layer: i for i, layer in enumerate(model.layers)}
+
+            # for i, layer in enumerate(model.layers):
+            #     doc.layers.add(
+            #         name=layer,
+            #         # color=i + 1,
+            #         # true_color=layer_to_color[layer],
+            #     )
 
             for part in model.parts:
                 if isinstance(part.polygon, Polygon):
@@ -435,7 +455,8 @@ class MultipartModel:
                     msp.add_lwpolyline(
                         list(polygon.exterior.coords),
                         dxfattribs={
-                            "layer": part.layer,
+                            # "layer": part.layer,
+                            "color": layer_to_color[part.layer],
                         },
                     )
 
@@ -443,11 +464,35 @@ class MultipartModel:
                         msp.add_lwpolyline(
                             list(interior.coords),
                             dxfattribs={
-                                "layer": part.layer,
+                                # "layer": part.layer,
+                                "color": layer_to_color[part.layer],
                             },
                         )
 
             doc.saveas(output_path / f"part_{i}.dxf")
+
+    def render_svgs(self, output_path):
+        output_path.mkdir(parents=True, exist_ok=True)
+        for i, model in enumerate(self.models):
+            dwg = svgwrite.Drawing(
+                output_path / f"part_{i}.svg", size=("100mm", "100mm")
+            )
+
+            layer_to_color = {layer: i for i, layer in enumerate(model.layers)}
+
+            for part in model.parts:
+                if isinstance(part.polygon, Polygon):
+                    polygons = [part.polygon]
+                elif isinstance(part.polygon, MultiPolygon):
+                    polygons = part.polygon.geoms
+
+                for polygon in polygons:
+                    dwg.add(svgwrite.shapes.Polygon(list(polygon.exterior.coords)))
+
+                    for interior in polygon.interiors:
+                        dwg.add(svgwrite.shapes.Polygon(list(interior.coords)))
+
+            dwg.save()
 
     def get_total_cut_length(self):
         total = 0
@@ -465,3 +510,59 @@ class MultipartModel:
                         total += interior.length
 
         return total
+
+
+def get_text_polygon(text):
+    """
+    For a given string returns a shapely polygon representing the text.
+
+    Kind of ugly because I'm doing character layout myself
+
+    TODO: allow specifying font size in mm
+    """
+    ttf_font = TTFont(str(pathlib.Path(__file__).parent / "Roboto-Regular.ttf"))
+
+    # Create an empty list to store the glyph shapes
+    glyph_shapes = []
+    cur_x = 0
+
+    # Iterate through each character in the text
+    for char in text:
+        glyph_name = ttf_font.getBestCmap()[ord(char)]
+        glyph = ttf_font["glyf"][glyph_name]
+
+        # Extract the glyph's contours
+        if hasattr(glyph, "components"):
+            # If the glyph has components, flatten them to a simple outline
+            glyph = glyph.getCompositeGlyph()
+
+        contour, indicies, flags = glyph.getCoordinates(ttf_font["glyf"])
+
+        polygon = None
+        cur_poly = []
+        for i, coord in enumerate(contour):
+            cur_poly.append((coord[0], coord[1]))
+
+            if i in indicies:
+                if polygon is None:
+                    polygon = Polygon(cur_poly)
+                else:
+                    new_poly = LinearRing(cur_poly)
+
+                    # TTF fonts define negative space as being CCW
+                    if new_poly.is_ccw:
+                        polygon -= Polygon(cur_poly)
+                    else:
+                        polygon = shapely_ops.unary_union([polygon, Polygon(cur_poly)])
+
+                cur_poly = []
+
+        polygon = shapely_affinity.translate(polygon, cur_x, 0)
+        cur_x = polygon.bounds[2]
+
+        glyph_shapes.append(polygon)
+
+    # Combine the individual glyph shapes into a MultiPolygon
+    multipolygon = MultiPolygon(glyph_shapes)
+
+    return multipolygon

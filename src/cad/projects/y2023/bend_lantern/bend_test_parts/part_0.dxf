@@ -5,11 +5,11 @@ HEADER
   9
 $ACADVER
   1
-AC1024
+AC1032
   9
 $ACADMAINTVER
- 70
-6
+ 90
+4
   9
 $DWGCODEPAGE
   3
@@ -18,6 +18,10 @@ ANSI_1252
 $LASTSAVEDBY
   1
 ezdxf
+  9
+$REQUIREDVERSIONS
+160
+0
   9
 $INSBASE
  10
@@ -489,7 +493,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2460238.6469444446
+2460239.638564815
   9
 $TDUCREATE
  40
@@ -497,7 +501,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2460238.6469444446
+2460239.638564815
   9
 $TDUUPDATE
  40
@@ -929,11 +933,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{1F0BCBDC-4FF0-43A7-BB72-38F0663B874D}
+{3989DF89-C00D-4943-8028-EF42BDB4B0F7}
   9
 $VERSIONGUID
   2
-{BB1575AF-8CDD-4E49-A469-B633286890D1}
+{6C0CA521-FAE2-4BA6-8011-50A8CD2935F5}
   9
 $EXTNAMES
 290
@@ -2031,7 +2035,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2307,7 +2313,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2343,7 +2351,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2379,7 +2389,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2415,7 +2427,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2451,7 +2465,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2487,7 +2503,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2523,7 +2541,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2559,7 +2579,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2595,7 +2617,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2631,7 +2655,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2667,7 +2693,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2703,7 +2731,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2739,7 +2769,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2775,7 +2807,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2811,7 +2845,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2847,7 +2883,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2883,7 +2921,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2919,7 +2959,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2955,7 +2997,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -2991,7 +3035,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -3027,7 +3073,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -3063,7 +3111,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -3099,7 +3149,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -3135,7 +3187,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -3171,7 +3225,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -3207,7 +3263,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -3243,7 +3301,9 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-default
+0
+ 62
+0
 100
 AcDbPolyline
  90
@@ -4299,7 +4359,7 @@ DictionaryVariables
 280
 0
   1
-1.1.1 @ 2023-10-20T20:31:36.804362+00:00
+1.1.1 @ 2023-10-21T20:19:32.892599+00:00
   0
 DICTIONARYVAR
   5
@@ -4311,7 +4371,7 @@ DictionaryVariables
 280
 0
   1
-1.1.1 @ 2023-10-20T20:31:36.809778+00:00
+1.1.1 @ 2023-10-21T20:19:32.900100+00:00
   0
 ENDSEC
   0

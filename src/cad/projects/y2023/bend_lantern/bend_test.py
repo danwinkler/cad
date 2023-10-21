@@ -17,7 +17,13 @@ from shapely.ops import *
 from solid import utils
 
 from cad.common.fills_2d import honeycomb_a
-from cad.common.lasercut import Model, MultipartModel, s_poly_to_scad, skeleton_to_polys
+from cad.common.lasercut import (
+    Model,
+    MultipartModel,
+    get_text_polygon,
+    s_poly_to_scad,
+    skeleton_to_polys,
+)
 
 # from cad.common.helper import *
 
@@ -121,16 +127,26 @@ class Structure:
 
         holes = unary_union([tab_0, tab_1])
 
-        n_markers = {0: 1, 0.5: 2, 1: 3}[wood_thickness_curve_offset_factor]
-        for i in range(n_markers):
-            marker = Point(10 + i * 5, 10 + i * 5).buffer(2)
-            holes = holes.union(marker)
-
         outline = Polygon(holes.convex_hull.boundary).buffer(3)
 
         part = outline - holes
 
         m.add_poly(part)
+
+        text_scale = 0.002
+        text = translate(
+            scale(
+                get_text_polygon(f"{wood_thickness_curve_offset_factor}"),
+                text_scale,
+                text_scale,
+                text_scale,
+                origin=(0, 0),
+            ),
+            10,
+            10,
+        )
+
+        m.add_poly(text, layer="text")
 
         return m
 
@@ -158,6 +174,7 @@ output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_pa
 # model.render_single_svg(__file__ + ".svg")
 model.render_single_dxf(__file__ + ".dxf")
 model.render_dxfs(output_dir)
+# model.render_svgs(output_dir)
 
 print(f"Total Cut Length: {model.get_total_cut_length()}")
 
