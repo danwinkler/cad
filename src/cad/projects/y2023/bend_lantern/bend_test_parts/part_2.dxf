@@ -493,7 +493,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2460241.704027778
+2460242.6813078704
   9
 $TDUCREATE
  40
@@ -501,7 +501,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2460241.704027778
+2460242.6813078704
   9
 $TDUUPDATE
  40
@@ -933,11 +933,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{24B7A53E-67FF-4B62-9A1E-2A82F21C13EC}
+{18736FA9-03CC-445C-A0DD-C04269072734}
   9
 $VERSIONGUID
   2
-{A6DA7573-3CAB-4E47-AC77-271A2D74DE26}
+{FC7ED807-C823-4B76-9343-AEF32AB74095}
   9
 $EXTNAMES
 290
@@ -1327,9 +1327,9 @@ ISM
   0
 CLASS
   1
-ACDBPLACEHOLDER
+LAYOUT
   2
-AcDbPlaceHolder
+AcDbLayout
   3
 ObjectDBX Classes
  90
@@ -1343,9 +1343,9 @@ ObjectDBX Classes
   0
 CLASS
   1
-LAYOUT
+ACDBPLACEHOLDER
   2
-AcDbLayout
+AcDbPlaceHolder
   3
 ObjectDBX Classes
  90
@@ -2037,7 +2037,7 @@ AcDbEntity
   8
 0
  62
-0
+1
 100
 AcDbPolyline
  90
@@ -2339,7 +2339,7 @@ AcDbEntity
   8
 0
  62
-0
+1
 100
 AcDbPolyline
  90
@@ -2377,7 +2377,7 @@ AcDbEntity
   8
 0
  62
-0
+1
 100
 AcDbPolyline
  90
@@ -2415,7 +2415,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2493,7 +2493,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2571,7 +2571,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2609,7 +2609,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3777,7 +3777,7 @@ DictionaryVariables
 280
 0
   1
-1.1.1 @ 2023-10-23T21:53:48.595186+00:00
+1.1.1 @ 2023-10-24T20:21:05.655341+00:00
   0
 DICTIONARYVAR
   5
@@ -3789,7 +3789,7 @@ DictionaryVariables
 280
 0
   1
-1.1.1 @ 2023-10-23T21:53:48.598176+00:00
+1.1.1 @ 2023-10-24T20:21:05.658753+00:00
   0
 ENDSEC
   0

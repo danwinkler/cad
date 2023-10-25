@@ -412,24 +412,24 @@ class Shelf:
         for i in range(self.wall_piece_count):
             x_pos = self.wall_piece_x_pos(i)
             wall_piece = self.wall_piece_model(seed=i)
-            wall_piece.rotate = (
-                (1, 0, 0),
+            wall_piece.renderer.rotate(
                 90,
-            )
-            wall_piece.translate = (x_pos, 0, 0)
+                (1, 0, 0),
+            ).translate(x=x_pos)
 
             model.add_model(wall_piece)
 
             support = self.get_support_model(seed=support_seeds[i])
-            support.rotate = ((0, 1, 0), -90)
-            support.translate = (x_pos + self.wood_thickness / 2, -self.shelf_depth, 0)
-            support.color = (0.75, 0.45, 0.0)
+            support.renderer.rotate(-90, (0, 1, 0)).translate(
+                x_pos + self.wood_thickness / 2,
+                -self.shelf_depth,
+                0,
+            ).color(0.75, 0.45, 0.0)
 
             model.add_model(support)
 
         shelf = self.shelf_model()
-        shelf.translate = (0, 0, self.shelf_support_height)
-        shelf.color = (0.7, 0.5, 0.0)
+        shelf.renderer.translate(z=self.shelf_support_height).color(0.7, 0.5, 0.0)
         model.add_model(shelf)
 
         return model

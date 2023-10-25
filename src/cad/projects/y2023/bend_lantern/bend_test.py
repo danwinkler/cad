@@ -157,7 +157,7 @@ class Structure:
 
         for i, v in enumerate([0, 0.5, 1]):
             bottom = self.bottom_model(wood_thickness_curve_offset_factor=v)
-            bottom.translate = (100 + i * 50, 0)
+            bottom.renderer.translate(x=100 + i * 50)
             model.add_model(bottom)
 
         return model

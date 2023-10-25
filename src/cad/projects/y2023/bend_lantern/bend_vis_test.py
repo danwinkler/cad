@@ -21,9 +21,11 @@ from shapely.affinity import *
 from shapely.geometry import *
 from shapely.ops import *
 from solid import utils
+from tqdm import tqdm
 
 from cad.common.fills_2d import honeycomb_a
 from cad.common.lasercut import (
+    BendyRenderer,
     Model,
     MultipartModel,
     get_text_polygon,
@@ -36,115 +38,70 @@ from cad.common.lasercut import (
 
 # random.seed(0)
 
-shape = box(0, 0, 100, 100)
-shape -= Point(50, 50).buffer(20)
+side_length = 50
+corner_radius = 30
+corner_length = math.pi * corner_radius / 2
+base_perimeter_length = (side_length + corner_length) * 4
+
+base = box(
+    corner_radius,
+    corner_radius,
+    corner_radius + side_length,
+    corner_radius + side_length,
+).buffer(corner_radius)
+
+shape = box(0, 0, base_perimeter_length, 20)
 
 
-def get_triangulation_input(polygon):
-    pts = []
-    seg = []
-    holes = []
+def build_diamonds(
+    n_rows, diamond_height, diamond_width, diamond_y_spacing, diamond_x_spacing, start
+):
+    diamonds = []
+    for i in range(n_rows):
+        for j in range(-2, 3):
+            y = start.y + j * (diamond_height + diamond_y_spacing)
+            if i % 2 == 0:
+                y += (diamond_height + diamond_y_spacing) / 2
 
-    if isinstance(polygon, Polygon):
-        polys = [polygon]
-    elif isinstance(polygon, MultiPolygon):
-        polys = polygon.geoms
+            x = start.x + i * (diamond_width + diamond_x_spacing)
 
-    for poly in polys:
-        offset = len(pts)
-        for i, p in enumerate(poly.exterior.coords):
-            pts.append(p)
-            seg.append([offset + i, offset + (i + 1) % len(poly.exterior.coords)])
+            diamond = Polygon(
+                [
+                    (x, y),
+                    (x + diamond_width / 2, y + diamond_height / 2),
+                    (x + diamond_width, y),
+                    (x + diamond_width / 2, y - diamond_height / 2),
+                ]
+            )
 
-        for interior in poly.interiors:
-            offset = len(pts)
-            for i, p in enumerate(interior.coords):
-                pts.append(p)
-                seg.append([offset + i, offset + (i + 1) % len(interior.coords)])
+            diamonds.append(diamond)
 
-            # Find point within interior and add it to holes
-            p = interior.centroid
-            interior_polygon = Polygon(interior)
-            for i in range(500):
-                if interior_polygon.contains(p):
-                    holes.append([p.x, p.y])
-                    break
-                p = Point(
-                    interior.bounds[0] + random.random() * interior.bounds[2],
-                    interior.bounds[1] + random.random() * interior.bounds[3],
-                )
-            else:
-                raise Exception("Couldn't find point within interior")
-
-    return {
-        "vertices": pts,
-        "segments": seg,
-        "holes": holes,
-    }
+    return unary_union(diamonds)
 
 
-# tri = get_triangulation_input(shape)
+for i in range(4):
+    start = Point(corner_length + i * (corner_length + side_length), 10)
+    diamond_height = 24
+    diamond_width = 1.5
+    diamond_y_spacing = 3
+    diamond_x_spacing = 0.8
+    n_rows = int(corner_length / (diamond_width + diamond_x_spacing)) + 1
+    diamonds = build_diamonds(
+        n_rows=n_rows,
+        diamond_height=diamond_height,
+        diamond_width=diamond_width,
+        diamond_y_spacing=diamond_y_spacing,
+        diamond_x_spacing=diamond_x_spacing,
+        start=start,
+    )
 
-# t = triangle.triangulate(tri, "p")
+    shape = shape.difference(diamonds)
 
-# scad_tris = []
-# for triangle in t["triangles"]:
-#     a, b, c = triangle
-#     p0 = tri["vertices"][a]
-#     p1 = tri["vertices"][b]
-#     p2 = tri["vertices"][c]
-#     scad_tris.append(
-#         solid.linear_extrude(random.random())(
-#             solid.polygon(
-#                 points=[p0, p1, p2],
-#                 paths=[[0, 1, 2]],
-#             )
-#         )
-#     )
+model = MultipartModel()
 
-# top_level_geom = solid.union()(scad_tris)
+model.add_part(shape, renderer=BendyRenderer(base))
 
-
-def extrude_polygon(polygon, height):
-    if isinstance(polygon, Polygon):
-        polys = [polygon]
-    elif isinstance(polygon, MultiPolygon):
-        polys = polygon.geoms
-
-    vf = [
-        trimesh.creation.triangulate_polygon(p, triangle_args="qpa0.001") for p in polys
-    ]
-
-    v, f = trimesh.util.append_faces([i[0] for i in vf], [i[1] for i in vf])
-
-    mesh = trimesh.creation.extrude_triangulation(v, f, height)
-
-    return mesh
-
-
-mesh = extrude_polygon(shape, 10)
-
-v, f = trimesh.remesh.subdivide_to_size(mesh.vertices, mesh.faces, max_edge=10)
-mesh = trimesh.Trimesh(vertices=v, faces=f)
-
-
-def bend_points(points):
-    def mutate(p):
-        x, y, z = p
-        theta = x / 100 * math.pi / 2
-        depth = z
-        return (
-            math.cos(theta) * (100 + z),
-            math.sin(theta) * (100 + z),
-            y,
-        )
-
-    return [mutate(p) for p in points]
-
-
-points = bend_points(mesh.vertices)
-
-top_level_geom = solid.polyhedron(points=points, faces=mesh.faces)
+top_level_geom = model.render_full()
 
 print("Saving File")
 with open(__file__ + ".scad", "w") as f:

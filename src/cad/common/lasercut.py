@@ -3,19 +3,30 @@ TODO: eventually move these laser cut helpers to the top level common module
 """
 import pathlib
 import subprocess
+import typing
+from collections import defaultdict
 from dataclasses import dataclass
 
 import cv2
+import euclid3
 import ezdxf
 import ezdxf.units
 import numpy as np
 import solid
 import svgwrite
 import svgwrite.shapes
+import trimesh
 from fontTools.ttLib import TTFont
 from shapely import affinity as shapely_affinity
 from shapely import ops as shapely_ops
-from shapely.geometry import LinearRing, MultiPolygon, Polygon
+from shapely.geometry import (
+    GeometryCollection,
+    LinearRing,
+    LineString,
+    MultiPolygon,
+    Polygon,
+)
+from tqdm import tqdm
 
 
 def s_poly_to_scad(s_poly):
@@ -127,7 +138,7 @@ def skeleton_to_polys(
             image[y, x] = color_value
 
     if debug_image:
-        cv2.imshow("image", image)
+        cv2.imshow("image", cv2.convertScaleAbs(image))
         cv2.waitKey(0)
 
     # Blur
@@ -230,10 +241,43 @@ def skeleton_to_polys(
 class Part:
     polygon: Polygon
     thickness: float
-    translate: list[float] = None
-    rotate: tuple[tuple[float, float, float], float] = None
+    renderer: typing.Any = None
+    thickness: float = None
     color: list[int] = None
     layer: str = "default"
+
+
+class AffineTransformRenderer:
+    def __init__(self, thickness=5):
+        self.stack = []
+        self._thickness = thickness
+
+    def translate(self, x=0, y=0, z=0):
+        self.stack.append(solid.translate([x, y, z]))
+        return self
+
+    def rotate(self, a, v):
+        self.stack.append(solid.rotate(a, v))
+        return self
+
+    def thickness(self, thickness):
+        self._thickness = thickness
+        return self
+
+    def color(self, r, g, b):
+        self.stack.append(solid.color((r, g, b)))
+        return self
+
+    def transform(self, polygon_or_object):
+        if isinstance(polygon_or_object, (Polygon, MultiPolygon)):
+            polygon_or_object = solid.linear_extrude(self._thickness)(
+                s_poly_to_scad(polygon_or_object)
+            )
+
+        for transform in self.stack:
+            polygon_or_object = transform(polygon_or_object)
+
+        return polygon_or_object
 
 
 class Model:
@@ -242,31 +286,30 @@ class Model:
             self.parts = [part]
         else:
             self.parts = []
+        self.renderer = AffineTransformRenderer()
         self.thickness = thickness
-        self.rotate = None
-        self.translate = None
-        self.thickness = None
-        self.color = None
 
     def add_poly(
         self,
         polygon,
-        rotate=None,
-        translate=None,
-        thickness=None,
-        color=None,
+        renderer=None,
         layer="default",
     ):
+        if renderer is None:
+            renderer = AffineTransformRenderer()
+
+            if self.thickness:
+                renderer.thickness(self.thickness)
+
         self.parts.append(
             Part(
                 polygon=polygon,
-                thickness=thickness or self.thickness,
-                translate=translate,
-                rotate=rotate,
-                color=color,
+                renderer=renderer,
                 layer=layer,
             )
         )
+
+        return renderer
 
     @property
     def minx(self):
@@ -294,20 +337,21 @@ class MultipartModel:
     def layers(self):
         return list(set([part.layer for model in self.models for part in model.parts]))
 
-    def add_part(
-        self, polygon, rotate=None, translate=None, thickness=None, color=None
-    ):
+    def add_part(self, polygon, renderer=None, color=None):
+        if renderer is None:
+            renderer = AffineTransformRenderer(thickness=self.default_thickness)
+
         self.models.append(
             Model(
                 Part(
                     polygon=polygon,
-                    thickness=thickness or self.default_thickness,
-                    translate=translate,
-                    rotate=rotate,
+                    renderer=renderer,
                     color=color,
                 )
             )
         )
+
+        return renderer
 
     def add_model(self, model):
         self.models.append(model)
@@ -316,27 +360,9 @@ class MultipartModel:
         scad_polys = []
         for model in self.models:
             for part in model.parts:
-                thickness = part.thickness or model.thickness or self.default_thickness
-                poly = solid.linear_extrude(thickness)(s_poly_to_scad(part.polygon))
-                if model.rotate:
-                    poly = solid.rotate(model.rotate[1], model.rotate[0])(poly)
-
-                if part.rotate:
-                    poly = solid.rotate(part.rotate[1], part.rotate[0])(poly)
-
-                if model.translate:
-                    poly = solid.translate(model.translate)(poly)
-
-                if part.translate:
-                    poly = solid.translate(part.translate)(poly)
-
-                if model.color:
-                    poly = solid.color(model.color)(poly)
-
-                if part.color:
-                    poly = solid.color(part.color)(poly)
-
-                scad_polys.append(poly)
+                scad_polys.append(
+                    model.renderer.transform(part.renderer.transform(part.polygon))
+                )
         return solid.union()(scad_polys)
 
     def render_parts(self, dir):
@@ -445,17 +471,11 @@ class MultipartModel:
             #         # true_color=layer_to_color[layer],
             #     )
 
-            for part in model.parts:
-                if isinstance(part.polygon, Polygon):
-                    polygons = [part.polygon]
-                elif isinstance(part.polygon, MultiPolygon):
-                    polygons = part.polygon.geoms
-
+            def write_polygon_list(part, polygons):
                 for polygon in polygons:
                     msp.add_lwpolyline(
                         list(polygon.exterior.coords),
                         dxfattribs={
-                            # "layer": part.layer,
                             "color": layer_to_color[part.layer],
                         },
                     )
@@ -464,10 +484,28 @@ class MultipartModel:
                         msp.add_lwpolyline(
                             list(interior.coords),
                             dxfattribs={
-                                # "layer": part.layer,
                                 "color": layer_to_color[part.layer],
                             },
                         )
+
+            def write_polygon(part, polygon):
+                if isinstance(polygon, Polygon):
+                    write_polygon_list(part, [polygon])
+                elif isinstance(polygon, MultiPolygon):
+                    write_polygon_list(part, polygon.geoms)
+                elif isinstance(polygon, LineString):
+                    msp.add_lwpolyline(
+                        list(polygon.coords),
+                        dxfattribs={
+                            "color": layer_to_color[part.layer],
+                        },
+                    )
+                elif isinstance(polygon, GeometryCollection):
+                    for geom in polygon.geoms:
+                        write_polygon(part, geom)
+
+            for part in model.parts:
+                write_polygon(part, part.polygon)
 
             doc.saveas(output_path / f"part_{i}.dxf")
 
@@ -566,3 +604,127 @@ def get_text_polygon(text):
     multipolygon = MultiPolygon(glyph_shapes)
 
     return multipolygon
+
+
+class BendyRenderer(AffineTransformRenderer):
+    def __init__(self, path, thickness=5, x_offset=0):
+        super().__init__(thickness=thickness)
+        if isinstance(path, Polygon):
+            path = path.exterior.coords
+        self.path = path
+        self.x_offset = x_offset
+
+    def _extrude_polygon(self, polygon, height):
+        if isinstance(polygon, Polygon):
+            polys = [polygon]
+        elif isinstance(polygon, MultiPolygon):
+            polys = polygon.geoms
+
+        vf = [
+            trimesh.creation.triangulate_polygon(p, triangle_args="qpa0.1")
+            for p in polys
+        ]
+
+        v, f = trimesh.util.append_faces([i[0] for i in vf], [i[1] for i in vf])
+
+        mesh = trimesh.creation.extrude_triangulation(v, f, height)
+
+        return mesh
+
+    def bend_points(self, points, path):
+        total_path_length = 0
+        for i in range(1, len(path)):
+            total_path_length += (
+                euclid3.Vector2(*path[i]) - euclid3.Vector2(*path[i - 1])
+            ).magnitude()
+
+        @dataclass
+        class PathData:
+            a: list
+            b: list
+            vec: euclid3.Vector2
+            vec_norm: euclid3.Vector2
+            vec_cross: euclid3.Vector2
+            mag: float
+
+        cache = {}
+
+        def mutate(p):
+            x, y, z = p
+
+            x += total_path_length - self.x_offset
+
+            # x becomes the distance along the path
+            total_dist = 0
+            start_pos = None
+            cross = None
+
+            for i in range(1, len(path) * 2):
+                key = i % len(path)
+                if key not in cache:
+                    a = path[(i - 1) % len(path)]
+                    b = path[i % len(path)]
+
+                    vec = euclid3.Vector2(*b) - euclid3.Vector2(*a)
+                    mag = vec.magnitude()
+                    if mag:
+                        vec_norm = euclid3.Vector2(vec.x / mag, vec.y / mag)
+                    else:
+                        vec_norm = vec.copy()
+                    cross = vec_norm.cross()
+
+                    data = PathData(
+                        a=a,
+                        b=b,
+                        vec=vec,
+                        vec_norm=vec_norm,
+                        vec_cross=cross,
+                        mag=mag,
+                    )
+                    cache[key] = data
+                else:
+                    data = cache[key]
+
+                x_on_d = x - total_dist
+
+                if x_on_d <= data.mag:
+                    vec = data.vec_norm.copy()
+                    vec *= float(x_on_d)
+                    start_pos = [data.a[0] + vec.x, data.a[1] + vec.y]
+                    cross = data.vec_cross
+                    break
+
+                total_dist += data.mag
+
+            if not start_pos:
+                raise Exception("Point not found")
+
+            new_x = start_pos[0] + cross.x * z
+            new_y = start_pos[1] + cross.y * z
+            new_z = y
+
+            return [new_x, new_y, new_z]
+
+        return [mutate(p) for p in tqdm(points)]
+
+    def transform(self, polygon_or_object):
+        assert isinstance(polygon_or_object, (Polygon, MultiPolygon))
+
+        # Step 1: Extrude polygon to a mesh
+        mesh = self._extrude_polygon(polygon_or_object, self._thickness)
+
+        # Step 2: Subdivide mesh so that there are enough points to bend around corners
+        # TODO: make this customizable
+        max_edge = (polygon_or_object.bounds[2] - polygon_or_object.bounds[0]) / 20
+        v, f = trimesh.remesh.subdivide_to_size(
+            mesh.vertices, mesh.faces, max_edge=max_edge
+        )
+        mesh = trimesh.Trimesh(vertices=v, faces=f)
+
+        # Step 3: Bend Mesh
+        bent_vertices = self.bend_points(mesh.vertices, self.path)
+
+        # Step 4: Construct a solid polyhedron
+        polyhedron = solid.polyhedron(points=bent_vertices, faces=mesh.faces)
+
+        return super().transform(polyhedron)
