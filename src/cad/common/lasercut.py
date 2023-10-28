@@ -97,7 +97,13 @@ def generate_polygons(contours, hierarchy):
 
 
 def skeleton_to_polys(
-    lines, im_scale=1.0, blur=5, margin=5, threshold=30, debug_image=False
+    lines,
+    im_scale=1.0,
+    blur=5,
+    margin=5,
+    threshold=30,
+    debug_image=False,
+    save_images=None,
 ):
     minx = min([min([x1, x2]) for (x1, y1, v1), (x2, y2, v2) in lines])
     maxx = max([max([x1, x2]) for (x1, y1, v1), (x2, y2, v2) in lines])
@@ -141,6 +147,9 @@ def skeleton_to_polys(
         cv2.imshow("image", cv2.convertScaleAbs(image))
         cv2.waitKey(0)
 
+    if save_images is not None:
+        save_images["line_image"] = image
+
     # Blur
     blurred_image = cv2.GaussianBlur(image, (blur, blur), 0)
 
@@ -148,78 +157,26 @@ def skeleton_to_polys(
         cv2.imshow("blurred_image", blurred_image)
         cv2.waitKey(0)
 
+    if save_images is not None:
+        save_images["blurred_image"] = blurred_image
+
     # Threshold
     _, threshold_image = cv2.threshold(blurred_image, threshold, 255, cv2.THRESH_BINARY)
 
     # Convert to uint8
     threshold_image = threshold_image.astype(np.uint8)
 
-    # Debug
-    # threshold_image = blurred_image
-
     if debug_image:
         cv2.imshow("threshold_image", threshold_image)
         cv2.waitKey(0)
+
+    if save_images is not None:
+        save_images["threshold_image"] = threshold_image
 
     # Find contours in the blurred image
     contours, hierarchy = cv2.findContours(
         threshold_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
     )
-    # hierarchy = np.squeeze(hierarchy)
-
-    # polys = []
-    # for contour in contours:
-    #     # Convert the contour to a shapely polygon
-    #     contour = np.squeeze(contour)
-    #     contour = [im_to_world_space(x, y) for x, y in contour]
-    #     contour = Polygon(contour)
-    #     polys.append(contour)
-
-    # Define function to merge individual contours into one MultiPolygon
-    def merge_polygons(polygon: MultiPolygon, idx: int, add: bool) -> MultiPolygon:
-        """
-        polygon: Main polygon to which a new polygon is added
-        idx: Index of contour
-        add: If this contour should be added (True) or subtracted (False)
-        """
-
-        # Get contour from global list of contours
-        contour = np.squeeze(contours[idx])
-
-        # cv2.findContours() sometimes returns a single point -> skip this case
-        if len(contour) > 2:
-            # Convert contour to shapely polygon
-            contour = [im_to_world_space(x, y) for x, y in contour]
-            new_poly = Polygon(contour)
-
-            # Not all polygons are shapely-valid (self intersection, etc.)
-            if not new_poly.is_valid:
-                # Convert invalid polygon to valid
-                new_poly = new_poly.buffer(0)
-
-            # Merge new polygon with the main one
-            if add:
-                polygon = polygon.union(new_poly)
-            else:
-                polygon = polygon.difference(new_poly)
-
-        # Check if current polygon has a child
-        child_idx = hierarchy[idx][2]
-        if child_idx >= 0:
-            # Call this function recursively, negate `add` parameter
-            polygon = merge_polygons(polygon, child_idx, not add)
-
-        # Check if there is some next polygon at the same hierarchy level
-        next_idx = hierarchy[idx][0]
-        if next_idx >= 0:
-            # Call this function recursively
-            polygon = merge_polygons(polygon, next_idx, add)
-
-        return polygon
-
-    # Call the function with an initial empty polygon and start from contour 0
-    # polygon = merge_polygons(MultiPolygon(), 0, True)
-    # polys = [polygon]
 
     polys = generate_polygons(contours, hierarchy)
 
@@ -355,6 +312,7 @@ class MultipartModel:
 
     def add_model(self, model):
         self.models.append(model)
+        return model
 
     def render_full(self):
         scad_polys = []
@@ -659,7 +617,7 @@ class BendyRenderer(AffineTransformRenderer):
             start_pos = None
             cross = None
 
-            for i in range(1, len(path) * 2):
+            for i in range(1, len(path) * 3):
                 key = i % len(path)
                 if key not in cache:
                     a = path[(i - 1) % len(path)]

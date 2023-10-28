@@ -1062,6 +1062,17 @@ docs = ["furo", "olefile", "sphinx (>=2.4)", "sphinx-copybutton", "sphinx-inline
 tests = ["check-manifest", "coverage", "defusedxml", "markdown2", "olefile", "packaging", "pyroma", "pytest", "pytest-cov", "pytest-timeout"]
 
 [[package]]
+name = "pixie-python"
+version = "4.3.0"
+description = "Python bindings for Pixie, a full-featured 2D graphics library"
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+files = [
+    {file = "pixie-python-4.3.0.tar.gz", hash = "sha256:ec7ab8e5fbf3147bef086b84e53224331bb639b7be5910f656e84ae6131561cb"},
+]
+
+[[package]]
 name = "platformdirs"
 version = "3.11.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
@@ -1924,4 +1935,4 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10,<3.13"
-content-hash = "3ec6371798039e80a93a515f4021db360ca2b6bfd12d802eb416939fe120fd96"
+content-hash = "2894523bd9e317fa15522114c8b2b2c877375f35dac6dea0c54dbfb84ba7d894"

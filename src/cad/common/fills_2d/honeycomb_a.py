@@ -124,17 +124,6 @@ def get_honeycomb_structure_for_poly(
                 points.append(p)
                 index.insert(len(points) - 1, (p.x, p.y, p.x, p.y))
 
-    # Remove points too far out
-    # points = list(
-    #     filter(
-    #         lambda p: p.x > poly_min_x - 5 * honeycomb_scale
-    #         and p.y > poly_min_y - 5 * honeycomb_scale
-    #         and p.x < poly_max_x + 5 * honeycomb_scale
-    #         and p.y < poly_max_y + 5 * honeycomb_scale,
-    #         points,
-    #     )
-    # )
-
     # Caculating Voronoi
     vor = Voronoi([(p.x, p.y) for p in points])
 
@@ -142,15 +131,6 @@ def get_honeycomb_structure_for_poly(
     regions = list(filter(lambda x: all(i >= 0 for i in x) and len(x) > 0, vor.regions))
 
     def area(corners):
-        # n = len(corners)  # of corners
-        # area = 0.0
-        # for i in range(n):
-        #     j = (i + 1) % n
-        #     area += corners[i][0] * corners[j][1]
-        #     area -= corners[j][0] * corners[i][1]
-        # area = abs(area) / 2.0
-        # return area
-
         return Polygon(corners).area
 
     # Remove too big regions
@@ -162,9 +142,7 @@ def get_honeycomb_structure_for_poly(
         )
     )
 
-    # Assemble extruded sections
-    print("Building openscad file")
-
+    # Offset polygons
     holes = []
     for region in regions:
         verts = [vor.vertices[r] for r in region]
@@ -183,7 +161,6 @@ def get_honeycomb_structure_for_poly(
 
         holes.append(cutout)
 
-    # return poly - unary_union(holes)
     return unary_union(holes)
 
 
