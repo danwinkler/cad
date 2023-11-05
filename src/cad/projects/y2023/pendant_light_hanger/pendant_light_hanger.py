@@ -63,7 +63,8 @@ def basic_arch_shape(n_segments):
         )
 
     project_steps.record(
-        LineString([l[0] for l in lines] + [lines[-1][1]]), key="01_arch_shape"
+        rotate(LineString([l[0] for l in lines] + [lines[-1][1]]), 180),
+        key="01_arch_shape",
     ).margin(20)
 
     save_images = {}
@@ -72,9 +73,16 @@ def basic_arch_shape(n_segments):
         lines, im_scale=3.0, blur=201, margin=100, threshold=8, save_images=save_images
     )
 
-    project_steps.record(save_images["line_image"], key="02_line_image")
-    project_steps.record(save_images["blurred_image"], key="03_blurred_image")
-    project_steps.record(save_images["threshold_image"], key="04_threshold_image")
+    project_steps.record(
+        cv2.rotate(save_images["line_image"], cv2.ROTATE_180), key="02_line_image"
+    )
+    project_steps.record(
+        cv2.rotate(save_images["blurred_image"], cv2.ROTATE_180), key="03_blurred_image"
+    )
+    project_steps.record(
+        cv2.rotate(save_images["threshold_image"], cv2.ROTATE_180),
+        key="04_threshold_image",
+    )
 
     polys = [shapelysmooth.taubin_smooth(poly, 0.1, 0.1, 5) for poly in polys]
     # polys = [shapelysmooth.catmull_rom_smooth(poly, 0.5) for poly in polys]
@@ -82,12 +90,14 @@ def basic_arch_shape(n_segments):
     # There should be one poly rn
     poly = polys[0]
 
-    project_steps.record(poly, key="05_basic_shape").margin(20)
+    project_steps.record(rotate(poly, 180), key="05_basic_shape").margin(20)
 
     # Make it flat against the wall
     poly -= box(-50, -20, 0, 200)
 
-    project_steps.record(poly, key="06_basic_shape_flattened_back").margin(20)
+    project_steps.record(rotate(poly, 180), key="06_basic_shape_flattened_back").margin(
+        20
+    )
 
     return poly
 
@@ -135,7 +145,7 @@ def arch(notch=False, interior_structure=False):
 
         poly = unary_union([poly] + tabs)
 
-        project_steps.record(poly, key="07_with_tabs").margin(20)
+        project_steps.record(rotate(poly, 180), key="07_with_tabs").margin(20)
 
     # Along line segments
     hole_indicies = [
@@ -155,7 +165,7 @@ def arch(notch=False, interior_structure=False):
 
         poly -= Point(x, y).buffer(hole_radius)
 
-    project_steps.record(poly, key="08_with_holes").margin(20)
+    project_steps.record(rotate(poly, 180), key="08_with_holes").margin(20)
 
     # Finally, split the poly into n parts such that it will fit on the build plate.
 
@@ -237,7 +247,9 @@ def arch(notch=False, interior_structure=False):
 
             con_poly = shapelysmooth.taubin_smooth(con_poly, 0.2, 0.2, 5)
 
-            project_steps.record(con_poly, key="09_connector_poly").margin(20)
+            project_steps.record(rotate(con_poly, 180), key="09_connector_poly").margin(
+                20
+            )
 
             return con_poly
 
@@ -249,17 +261,21 @@ def arch(notch=False, interior_structure=False):
         if end is not None:
             our_poly = our_poly - get_cut(end, 1)
 
-        project_steps.record(our_poly, key="10_cut_poly").margin(20)
+        project_steps.record(rotate(our_poly, 180), key="10_cut_poly").margin(20)
 
         # RIM
         exterior_poly = Polygon(our_poly.exterior)
-        project_steps.record(exterior_poly, key="11_exterior_poly").margin(20)
+        project_steps.record(rotate(exterior_poly, 180), key="11_exterior_poly").margin(
+            20
+        )
         rim = exterior_poly - exterior_poly.buffer(-rim_size)
-        project_steps.record(rim, key="12_rim").margin(20)
+        project_steps.record(rotate(rim, 180), key="12_rim").margin(20)
         our_poly = unary_union([our_poly, rim])
-        project_steps.record(our_poly, key="13_with_rim").margin(20)
+        project_steps.record(rotate(our_poly, 180), key="13_with_rim").margin(20)
         our_poly -= interior_structure - rim
-        project_steps.record(our_poly, key="14_removed_interior_structure").margin(20)
+        project_steps.record(
+            rotate(our_poly, 180), key="14_removed_interior_structure"
+        ).margin(20)
 
         # Connector
         if start is not None:
@@ -272,7 +288,7 @@ def arch(notch=False, interior_structure=False):
         if end is not None:
             our_poly = unary_union([our_poly, get_connector(end, 1)])
 
-        project_steps.record(our_poly, key="15_apply_connector").margin(20)
+        project_steps.record(rotate(our_poly, 180), key="15_apply_connector").margin(20)
 
         # Finally add the holes one more time (we probably stuck something in there)
         for i in hole_indicies:
@@ -288,7 +304,7 @@ def arch(notch=False, interior_structure=False):
 
                 our_poly -= Point(x, y).buffer(hole_radius)
 
-        project_steps.record(our_poly, key="16_fix_holes").margin(20)
+        project_steps.record(rotate(our_poly, 180), key="16_fix_holes").margin(20)
 
         # Remove any holes that are too small
         min_area = 5
@@ -297,9 +313,16 @@ def arch(notch=False, interior_structure=False):
             [i for i in our_poly.interiors if Polygon(i).area > min_area],
         )
 
-        project_steps.record(our_poly, key="17_remove_small_holes").margin(20)
+        project_steps.record(rotate(our_poly, 180), key="17_remove_small_holes").margin(
+            20
+        )
 
         polys.append(our_poly)
+
+    basic_pieces_shape = MultiPolygon(polys)
+    project_steps.record(
+        rotate(basic_pieces_shape, 180), key="18_basic_pieces_shape"
+    ).margin(20)
 
     return polys
 
@@ -334,12 +357,14 @@ def backplate(latch=True):
         for y in [-y_offset, y_offset]:
             poly -= Point(x, y).buffer(screw_hole_rad)
 
+    project_steps.record(rotate(poly, 90), key=f"19_backplate_{latch}").margin(20)
+
     return poly
 
 
 model = MultipartModel(default_thickness=board_thickness)
 
-expanded = False
+expanded = True
 expand_amount = 10 if expanded else 1
 
 # interior arch structure
@@ -353,7 +378,7 @@ cutout = get_honeycomb_structure_for_poly(
     wall_offset=-2.0,
 )
 
-project_steps.record(cutout, key="interior_structure").margin(20)
+project_steps.record(rotate(cutout, 180), key="interior_structure").margin(20)
 
 # Main arch
 for i in range(4):
