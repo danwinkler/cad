@@ -203,11 +203,15 @@ class BoxA:
 
 
 box_inst = BoxA()
+box_inst.depth = 70
+box_inst.width = 100
+box_inst.length = 200
 
 model = box_inst.get_model()
 
 output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_parts")
 model.render_dxfs(output_dir)
+model.render_single_dxf(output_dir / "single.dxf")
 
 top_level_geom = model.render_full()
 
