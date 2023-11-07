@@ -83,15 +83,15 @@ class Lantern:
         self.wood_thickness = 5
 
         # Bend shape settings
-        self.bend_shape_height = 200
-        self.bend_radius = 40
-        self.side_length = 100
+        self.bend_shape_height = 120
+        self.bend_radius = 30
+        self.side_length = 60
         self.bend_length = math.pi * self.bend_radius / 2
         self.tab_length = 8
         self.tab_offset_from_center = 5
 
         # Base plate settings
-        self.base_plate_margin = 20
+        self.base_plate_margin = 10
 
     def wood_thickness_tab_hole_size(self):
         # This is so if we need to adjust the size of the hole separately from the wood_thickness variable

@@ -527,10 +527,16 @@ def get_text_polygon(text):
         glyph_name = ttf_font.getBestCmap()[ord(char)]
         glyph = ttf_font["glyf"][glyph_name]
 
-        # Extract the glyph's contours
-        if hasattr(glyph, "components"):
-            # If the glyph has components, flatten them to a simple outline
+        # # Extract the glyph's contours
+        # if hasattr(glyph, "components"):
+        #     # If the glyph has components, flatten them to a simple outline
+        #     glyph = glyph.getCompositeGlyph()
+
+        # Try to flatten the glyph to a simple outline
+        try:
             glyph = glyph.getCompositeGlyph()
+        except:
+            pass
 
         contour, indicies, flags = glyph.getCoordinates(ttf_font["glyf"])
 
@@ -553,15 +559,17 @@ def get_text_polygon(text):
 
                 cur_poly = []
 
-        polygon = shapely_affinity.translate(polygon, cur_x, 0)
-        cur_x = polygon.bounds[2]
-
-        glyph_shapes.append(polygon)
+        if polygon is None:
+            cur_x += 1000  # TODO: figure out how to get the width of a whitespace
+        else:
+            polygon = shapely_affinity.translate(polygon, cur_x, 0)
+            cur_x = polygon.bounds[2]
+            glyph_shapes.append(polygon)
 
     # Combine the individual glyph shapes into a MultiPolygon
-    multipolygon = MultiPolygon(glyph_shapes)
+    final_shape = shapely_ops.unary_union(glyph_shapes)
 
-    return multipolygon
+    return final_shape
 
 
 class BendyRenderer(AffineTransformRenderer):
