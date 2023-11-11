@@ -167,13 +167,13 @@ structure = Structure()
 
 model = structure.get_multi_model()
 
-top_level_geom = model.render_full()
+top_level_geom = model.render_scad()
 
 output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_parts")
 
 # model.render_single_svg(__file__ + ".svg")
 model.render_single_dxf(__file__ + ".dxf")
-model.render_dxfs(output_dir)
+model.render_parts(output_dir)
 # model.render_svgs(output_dir)
 
 print(f"Total Cut Length: {model.get_total_cut_length()}")

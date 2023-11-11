@@ -203,6 +203,9 @@ class Part:
     color: list[int] = None
     layer: str = "default"
 
+    def get_solid(self, model):
+        return model.renderer.transform(self.renderer.transform(self.polygon))
+
 
 class AffineTransformRenderer:
     def __init__(self, thickness=5):
@@ -284,6 +287,27 @@ class Model:
     def layers(self):
         return list(set([part.layer for part in self.parts]))
 
+    def get_solid(self):
+        solids = []
+        for part in self.parts:
+            solids.append(part.get_solid(self))
+        return solid.union()(solids)
+
+
+class SolidModel:
+    def __init__(self):
+        # Keep this empty so that we don't confuse the 2D system
+        self.parts = []
+        self.solids = []
+        self.renderer = AffineTransformRenderer()
+
+    def add_solid(self, solid_obj):
+        self.solids.append(solid_obj)
+        return solid_obj
+
+    def get_solid(self):
+        return self.renderer.transform(solid.union()(self.solids))
+
 
 class MultipartModel:
     def __init__(self, default_thickness=5):
@@ -314,35 +338,11 @@ class MultipartModel:
         self.models.append(model)
         return model
 
-    def render_full(self):
-        scad_polys = []
+    def render_scad(self):
+        solids = []
         for model in self.models:
-            for part in model.parts:
-                scad_polys.append(
-                    model.renderer.transform(part.renderer.transform(part.polygon))
-                )
-        return solid.union()(scad_polys)
-
-    def render_parts(self, dir):
-        base_path = pathlib.Path(__file__).parent / dir
-        base_path.mkdir(parents=True, exist_ok=True)
-        for i, part in enumerate(self.parts):
-            scad_object = solid.projection()(
-                solid.linear_extrude(10)(s_poly_to_scad(part.polygon))
-            )
-
-            part_path = base_path / f"part_{i}.scad"
-            part_path.write_text(solid.scad_render(scad_object))
-
-    def render_svgs(self, dir):
-        pgm = "C:\Program Files\OpenSCAD\openscad.exe"
-
-        base_path = pathlib.Path(__file__).parent / dir
-        for i, part in enumerate(self.parts):
-            input_path = base_path / f"part_{i}.scad"
-            output_path = base_path / f"part_{i}.svg"
-            print(f"Rendering {input_path} to {output_path}")
-            subprocess.call([pgm, "-o", output_path, input_path])
+            solids.append(model.get_solid())
+        return solid.union()(solids)
 
     def render_single_svg(self, output_path):
         polys = []
@@ -375,6 +375,9 @@ class MultipartModel:
 
         next_x = 0
         for model in self.models:
+            if len(model.parts) == 0:
+                continue
+
             for part in model.parts:
                 if isinstance(part.polygon, Polygon):
                     polygons = [part.polygon]
@@ -407,13 +410,21 @@ class MultipartModel:
 
         doc.saveas(output_path)
 
-    def render_dxfs(self, output_path):
+    def render_parts(self, output_path):
         """
         So XTool's software doesn't really like DXF layers, but works great with "layers" specified by color, which it then converts into
         its own layer representation. So we'll just use colors to represent layers.
         """
         output_path.mkdir(parents=True, exist_ok=True)
         for i, model in enumerate(self.models):
+            if hasattr(model, "solids"):
+                # TODO: make each model class responsible for rendering itself
+                with open(output_path / f"part_{i}.scad", "w") as f:
+                    f.write(solid.scad_render(model.get_solid()))
+
+            if len(model.parts) == 0:
+                continue
+
             doc = ezdxf.new("R2018")
 
             doc.units = ezdxf.units.MM
@@ -470,6 +481,9 @@ class MultipartModel:
     def render_svgs(self, output_path):
         output_path.mkdir(parents=True, exist_ok=True)
         for i, model in enumerate(self.models):
+            if len(model.parts) == 0:
+                continue
+
             dwg = svgwrite.Drawing(
                 output_path / f"part_{i}.svg", size=("100mm", "100mm")
             )
@@ -694,3 +708,32 @@ class BendyRenderer(AffineTransformRenderer):
         polyhedron = solid.polyhedron(points=bent_vertices, faces=mesh.faces)
 
         return super().transform(polyhedron)
+
+
+def shapely_to_solid(polygon):
+    if isinstance(polygon, Polygon):
+        polygon = [polygon]
+    elif isinstance(polygon, MultiPolygon):
+        polygon = polygon.geoms
+
+    scad_polys = []
+
+    for poly in polygon:
+        exterior = solid.polygon(
+            points=[(x, y) for x, y in poly.exterior.coords],
+        )
+        interiors = [
+            solid.polygon(
+                points=[(x, y) for x, y in interior.coords],
+            )
+            for interior in poly.interiors
+        ]
+
+        scad_polys += [
+            solid.difference()(
+                exterior,
+                *interiors,
+            )
+        ]
+
+    return solid.union()(scad_polys)

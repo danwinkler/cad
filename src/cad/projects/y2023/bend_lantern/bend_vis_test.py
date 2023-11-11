@@ -101,7 +101,7 @@ model = MultipartModel()
 
 model.add_part(shape, renderer=BendyRenderer(base))
 
-top_level_geom = model.render_full()
+top_level_geom = model.render_scad()
 
 print("Saving File")
 with open(__file__ + ".scad", "w") as f:
