@@ -205,7 +205,7 @@ if __name__ == "__main__":
 
     # model.add_part(honeycomb)
 
-    top_level_geom = model.render_full()
+    top_level_geom = model.render_scad()
 
     # model.render_single_svg(__file__ + ".svg")
     model.render_single_dxf(__file__ + ".dxf")
