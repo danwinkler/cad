@@ -179,6 +179,14 @@ class BoxA:
         return m
 
     def get_model(self):
+        """
+        The current implementation needs all sides to be an even multiple of tab_width*2
+        """
+
+        assert self.width % (self.tab_width * 2) == 0
+        assert self.length % (self.tab_width * 2) == 0
+        assert self.depth % (self.tab_width * 2) == 0
+
         col_a = (0.8, 0.5, 0.2)
         col_b = (0.7, 0.4, 0.1)
 
@@ -203,7 +211,7 @@ class BoxA:
 
 
 box_inst = BoxA()
-box_inst.depth = 70
+box_inst.depth = 80
 box_inst.width = 100
 box_inst.length = 200
 
