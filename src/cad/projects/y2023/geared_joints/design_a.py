@@ -134,6 +134,12 @@ class ModelGen:
 
         # shape = shape - cutout.intersection(shape.buffer(-self.internal_wall_thickness))
 
+        # Registration holes
+        hole_rad = 1
+
+        shape -= Point(0, 30).buffer(hole_rad)
+        shape -= Point(0, 60).buffer(hole_rad)
+
         m.add_poly(shape)
 
         return m
