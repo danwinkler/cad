@@ -48,7 +48,7 @@ class ModelGen:
         self.arm_width = 40
         self.arm_length = 100
         self.internal_wall_thickness = 5
-        self.axle_radius = 2
+        self.axle_radius = 4
 
         self.teeth_count = 23
 
@@ -96,6 +96,18 @@ class ModelGen:
             shape -= Point(-self.mount_screw_offset, 0).buffer(
                 self.mount_screw_head_radius
             )
+            shape -= Point(0, 0).buffer(
+                self.bearing_radius - self.bearing_outer_to_inner_offset
+            )
+
+            # Spacer
+            shape = unary_union(
+                [
+                    shape,
+                    Point(0, 0).buffer(self.axle_radius + 2)
+                    - Point(0, 0).buffer(self.axle_radius),
+                ]
+            )
 
         if layer == 1:
             shape -= Point(0, 0).buffer(self.bearing_radius)
@@ -114,8 +126,6 @@ class ModelGen:
         # )
 
         # shape = shape - cutout.intersection(shape.buffer(-self.internal_wall_thickness))
-
-        shape -= Point(0, 0).buffer(self.axle_radius)
 
         m.add_poly(shape)
 
@@ -200,6 +210,23 @@ class ModelGen:
         part -= solid.translate([-self.mount_screw_offset, 0, -1])(screw_shape)
 
         m.add_solid(part)
+
+        # Spacer
+        spacer_outline = Point(0, 0).buffer(self.axle_radius + 2) - Point(0, 0).buffer(
+            self.axle_radius + 0.25
+        )
+
+        spacer = shapely_to_solid(spacer_outline)
+
+        spacer = solid.linear_extrude(
+            self.wood_thickness - (self.bearing_thickness - self.wood_thickness)
+        )(spacer)
+
+        spacer = solid.translate(
+            [0, 0, (self.bearing_thickness - self.wood_thickness)]
+        )(spacer)
+
+        m.add_solid(spacer)
 
         return m
 
