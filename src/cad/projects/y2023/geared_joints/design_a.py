@@ -67,6 +67,7 @@ class ModelGen:
         self.mount_screw_radius = 1.75
         self.mount_screw_head_radius = 2.95
         self.mount_screw_head_height = 3.2
+        self.mount_screw_nut_rad = 3.15  # Flat to flat hexagon
 
     def get_gear(self):
         gear_shape, pitch_radius = gear.generate(
@@ -88,14 +89,20 @@ class ModelGen:
 
         shape = unary_union([arm, gear_shape])
 
+        nut_shape = Polygon(
+            [
+                (
+                    math.cos(math.radians(60 * i + 30)) * self.mount_screw_nut_rad,
+                    math.sin(math.radians(60 * i + 30)) * self.mount_screw_nut_rad,
+                )
+                for i in range(6)
+            ]
+        )
+
         if layer == 0:
             # TODO: this might need to be different as its where the nut will be. It also might need to be nut shaped so the nut cant rotate
-            shape -= Point(self.mount_screw_offset, 0).buffer(
-                self.mount_screw_head_radius
-            )
-            shape -= Point(-self.mount_screw_offset, 0).buffer(
-                self.mount_screw_head_radius
-            )
+            shape -= translate(nut_shape, xoff=self.mount_screw_offset)
+            shape -= translate(nut_shape, xoff=-self.mount_screw_offset)
 
         if layer == 1:
             shape -= Point(0, 0).buffer(self.bearing_radius)
