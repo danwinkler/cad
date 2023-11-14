@@ -310,6 +310,8 @@ top_level_geom = model.render_scad()
 output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_parts")
 model.render_parts(output_dir)
 
+model.render_single_dxf(output_dir / "single.dxf")
+
 print(f"Total Cut Length: {model.get_total_cut_length()}")
 
 print("Saving File")

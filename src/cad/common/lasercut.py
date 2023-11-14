@@ -12,6 +12,7 @@ import euclid3
 import ezdxf
 import ezdxf.units
 import numpy as np
+import rectpack
 import solid
 import svgwrite
 import svgwrite.shapes
@@ -276,12 +277,28 @@ class Model:
         return min([part.polygon.bounds[0] for part in self.parts])
 
     @property
+    def miny(self):
+        return min([part.polygon.bounds[1] for part in self.parts])
+
+    @property
     def maxx(self):
         return max([part.polygon.bounds[2] for part in self.parts])
 
     @property
+    def maxy(self):
+        return max([part.polygon.bounds[3] for part in self.parts])
+
+    @property
+    def bounds(self):
+        return self.minx, self.miny, self.maxx, self.maxy
+
+    @property
     def width(self):
         return self.maxx - self.minx
+
+    @property
+    def height(self):
+        return self.maxy - self.miny
 
     @property
     def layers(self):
@@ -313,6 +330,7 @@ class MultipartModel:
     def __init__(self, default_thickness=5):
         self.models = []
         self.default_thickness = default_thickness
+        self.perimeter_bounds = (0, 0, 600, 300)
 
     @property
     def layers(self):
@@ -363,6 +381,73 @@ class MultipartModel:
 
         pathlib.Path(output_path).write_text(poly._repr_svg_())
 
+    def _write_model_into_modelspace(self, model, msp, layer_to_color):
+        def write_polygon_list(part, polygons):
+            for polygon in polygons:
+                msp.add_lwpolyline(
+                    list(polygon.exterior.coords),
+                    dxfattribs={
+                        "color": layer_to_color[part.layer],
+                    },
+                )
+
+                for interior in polygon.interiors:
+                    msp.add_lwpolyline(
+                        list(interior.coords),
+                        dxfattribs={
+                            "color": layer_to_color[part.layer],
+                        },
+                    )
+
+        def write_polygon(part, polygon):
+            if isinstance(polygon, Polygon):
+                write_polygon_list(part, [polygon])
+            elif isinstance(polygon, MultiPolygon):
+                write_polygon_list(part, polygon.geoms)
+            elif isinstance(polygon, LineString):
+                msp.add_lwpolyline(
+                    list(polygon.coords),
+                    dxfattribs={
+                        "color": layer_to_color[part.layer],
+                    },
+                )
+            elif isinstance(polygon, GeometryCollection):
+                for geom in polygon.geoms:
+                    write_polygon(part, geom)
+
+        for part in model.parts:
+            write_polygon(part, part.polygon)
+
+    def get_layout(self):
+        print("Packing...")
+        layout = {}
+
+        rects = []
+        bins = [(self.perimeter_bounds[2], self.perimeter_bounds[3]) for _ in range(1)]
+        for i, model in enumerate(self.models):
+            if len(model.parts) == 0:
+                continue
+
+            rects.append((model.width, model.height, i))
+
+        packer = rectpack.newPacker()
+
+        for rect in rects:
+            packer.add_rect(*rect)
+
+        for bin in bins:
+            packer.add_bin(*bin)
+
+        packer.pack()
+
+        packed = packer.rect_list()
+        for rect in packed:
+            b, x, y, w, h, rid = rect
+            model = self.models[rid]
+            layout[model] = (x, y)
+
+        return layout
+
     def render_single_dxf(self, output_path):
         doc = ezdxf.new("R2010")
 
@@ -373,10 +458,13 @@ class MultipartModel:
 
         msp = doc.modelspace()
 
-        next_x = 0
+        layout = self.get_layout()
+
         for model in self.models:
             if len(model.parts) == 0:
                 continue
+
+            x, y = layout[model]
 
             for part in model.parts:
                 if isinstance(part.polygon, Polygon):
@@ -387,8 +475,8 @@ class MultipartModel:
                 for polygon in polygons:
                     polygon = shapely_affinity.translate(
                         polygon,
-                        next_x,
-                        0,
+                        x,
+                        y,
                     )
 
                     msp.add_lwpolyline(
@@ -405,8 +493,6 @@ class MultipartModel:
                                 "layer": part.layer,
                             },
                         )
-
-            next_x += model.width + 1
 
         doc.saveas(output_path)
 
@@ -433,48 +519,7 @@ class MultipartModel:
 
             layer_to_color = {layer: i for i, layer in enumerate(model.layers)}
 
-            # for i, layer in enumerate(model.layers):
-            #     doc.layers.add(
-            #         name=layer,
-            #         # color=i + 1,
-            #         # true_color=layer_to_color[layer],
-            #     )
-
-            def write_polygon_list(part, polygons):
-                for polygon in polygons:
-                    msp.add_lwpolyline(
-                        list(polygon.exterior.coords),
-                        dxfattribs={
-                            "color": layer_to_color[part.layer],
-                        },
-                    )
-
-                    for interior in polygon.interiors:
-                        msp.add_lwpolyline(
-                            list(interior.coords),
-                            dxfattribs={
-                                "color": layer_to_color[part.layer],
-                            },
-                        )
-
-            def write_polygon(part, polygon):
-                if isinstance(polygon, Polygon):
-                    write_polygon_list(part, [polygon])
-                elif isinstance(polygon, MultiPolygon):
-                    write_polygon_list(part, polygon.geoms)
-                elif isinstance(polygon, LineString):
-                    msp.add_lwpolyline(
-                        list(polygon.coords),
-                        dxfattribs={
-                            "color": layer_to_color[part.layer],
-                        },
-                    )
-                elif isinstance(polygon, GeometryCollection):
-                    for geom in polygon.geoms:
-                        write_polygon(part, geom)
-
-            for part in model.parts:
-                write_polygon(part, part.polygon)
+            self._write_model_into_modelspace(model, msp, layer_to_color)
 
             doc.saveas(output_path / f"part_{i}.dxf")
 
