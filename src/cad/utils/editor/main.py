@@ -1,7 +1,10 @@
 import time
 from pathlib import Path
 
+import dill
 import ezdxf
+import numpy as np
+import trimesh
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -28,10 +31,12 @@ from kivy.uix.filechooser import FileChooserListView
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.popup import Popup
 from kivy.uix.widget import Widget
-from shapely.geometry import LineString
+from shapely.geometry import LineString, MultiLineString, MultiPolygon, Polygon
 from shapely.ops import unary_union
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
+
+from cad.utils.editor.data import EditorPacket, ExtrudedModel
 
 # Ordering: this must come before twisted imports
 install_twisted_reactor()
@@ -45,6 +50,7 @@ class Renderer(Widget):
         self.canvas = RenderContext(compute_normal_mat=True)
         self.canvas.shader.source = resource_find("simple.glsl")
         super(Renderer, self).__init__(**kwargs)
+        self.mesh = None
         with self.canvas:
             self.cb = Callback(self.setup_gl_context)
             PushMatrix()
@@ -63,6 +69,8 @@ class Renderer(Widget):
         asp = self.width / float(self.height)
         proj = Matrix().view_clip(-asp, asp, -1, 1, 1, 100, 1)
         self.canvas["projection_mat"] = proj
+        modelview = Matrix().look_at(0, 0, 5, 0, 0, 0, 0, 1, 0)
+        self.canvas["modelview_mat"] = modelview
         self.canvas["diffuse_light"] = (1.0, 1.0, 0.8)
         self.canvas["ambient_light"] = (0.1, 0.1, 0.1)
         self.rot.angle += delta * 100
@@ -70,17 +78,45 @@ class Renderer(Widget):
     def setup_scene(self):
         Color(1, 1, 1, 1)
         PushMatrix()
-        Translate(0, 0, -3)
+        Translate(0, 0, -10)
+        UpdateNormalMatrix()
         self.rot = Rotate(1, 0, 1, 0)
-        # m = list(self.scene.objects.values())[0]
-        # UpdateNormalMatrix()
-        # self.mesh = Mesh(
-        #     vertices=m.vertices,
-        #     indices=m.indices,
-        #     fmt=m.vertex_format,
-        #     mode="triangles",
-        # )
+
+        from shapely.geometry import box
+
+        shape = box(0, 0, 10, 10) - box(2, 2, 8, 8)
+
+        from shapely.affinity import scale
+
+        mesh = trimesh.creation.extrude_polygon(shape, 5)
+
+        self.set_geometry(mesh)
+
         PopMatrix()
+
+    def set_geometry(self, mesh):
+        if self.mesh:
+            self.canvas.remove(self.mesh)
+
+        UpdateNormalMatrix()
+
+        # Vertices need to be a 1D array of the form:
+        # [x1, y1, z1, xn1, yn1, zn1, x2, y2, z2, xn2, yn2, zn2, ...]
+        # where x, y, z are the vertex coordinates and xn, yn, zn are the vertex normals
+
+        vertices = np.concatenate(
+            (mesh.vertices, mesh.vertex_normals), axis=1
+        ).flatten()
+
+        vertices = vertices.astype("float32")
+
+        self.mesh = Mesh(
+            vertices=vertices,
+            indices=mesh.faces.flatten(),
+            fmt=[(b"v_pos", 3, "float"), (b"v_normal", 3, "float")],
+            mode="triangles",
+        )
+        self.canvas.add(self.mesh)
 
 
 class Canvas2D(Widget):
@@ -123,10 +159,20 @@ class Canvas2D(Widget):
             # Scale the canvas to fit the geometry in the viewport
             Scale(scale_factor, scale_factor, 1)
 
-            # Render all the lines in the geometry
-            for line in self.geometry.geoms:
-                Color(1, 1, 1, 1)
-                Line(points=list(line.coords), width=1)
+            def render_polygon(polygon):
+                Line(points=list(polygon.exterior.coords), width=1)
+                for interior in polygon.interiors:
+                    Line(points=list(interior.coords), width=1)
+
+            Color(1, 1, 1, 1)
+            if isinstance(self.geometry, MultiLineString):
+                for line in self.geometry.geoms:
+                    Line(points=list(line.coords), width=1)
+            elif isinstance(self.geometry, Polygon):
+                render_polygon(self.geometry)
+            elif isinstance(self.geometry, MultiPolygon):
+                for polygon in self.geometry.geoms:
+                    render_polygon(polygon)
 
     def clear_shapes(self):
         self.geometry = None
@@ -149,6 +195,20 @@ class ObserverEventHandler(FileSystemEventHandler):
             Clock.schedule_once(lambda dt: self.app.open_file(self.path), 0.2)
 
 
+class EditorServer(protocol.Protocol):
+    def dataReceived(self, data):
+        response = self.factory.app.handle_message(data)
+        if response:
+            self.transport.write(response)
+
+
+class EditorServerFactory(protocol.Factory):
+    protocol = EditorServer
+
+    def __init__(self, app):
+        self.app = app
+
+
 class RendererApp(App):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -156,6 +216,8 @@ class RendererApp(App):
         self.popup = None
         self.observer = None
         self.observer_handler = ObserverEventHandler(self)
+
+        reactor.listenTCP(17348, EditorServerFactory(self))
 
     def build(self):
         self.view_3d = Renderer()
@@ -231,7 +293,21 @@ class RendererApp(App):
         self.handle_open_file_select(None, [filename], None)
 
     def handle_message(self, message):
-        print(message)
+        packet = dill.loads(message)
+
+        if packet.key == "extruded_model":
+            extruded_model: ExtrudedModel = packet.data
+            self.view_2d.clear_shapes()
+
+            self.view_2d.set_geometry(extruded_model.shape)
+
+            self.view_2d.update_canvas()
+
+            mesh = trimesh.creation.extrude_polygon(
+                extruded_model.shape, extruded_model.thickness
+            )
+
+            self.view_3d.set_geometry(mesh)
 
 
 if __name__ == "__main__":
