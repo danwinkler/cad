@@ -26,6 +26,7 @@ from shapely.geometry import (
     LineString,
     MultiPolygon,
     Polygon,
+    box,
 )
 from tqdm import tqdm
 
@@ -423,12 +424,21 @@ class MultipartModel:
         layout = {}
 
         rects = []
-        bins = [(self.perimeter_bounds[2], self.perimeter_bounds[3]) for _ in range(1)]
+        bins = [
+            (self.perimeter_bounds[2], self.perimeter_bounds[3], float("inf"))
+            for _ in range(1)
+        ]
         for i, model in enumerate(self.models):
             if len(model.parts) == 0:
                 continue
 
-            rects.append((model.width, model.height, i))
+            rects.append(
+                (
+                    rectpack.float2dec(model.width, 3),
+                    rectpack.float2dec(model.height, 3),
+                    i,
+                )
+            )
 
         packer = rectpack.newPacker()
 
@@ -441,10 +451,52 @@ class MultipartModel:
         packer.pack()
 
         packed = packer.rect_list()
+
+        pack_check = []
+
         for rect in packed:
             b, x, y, w, h, rid = rect
             model = self.models[rid]
-            layout[model] = (x, y)
+
+            x = float(x)
+            y = float(y)
+            w = float(w)
+            h = float(h)
+
+            print(f"Model {rid} at {x}, {y} {w}x{h}")
+
+            bin = packer[b]
+
+            if (
+                bin.width != self.perimeter_bounds[2]
+                or bin.height != self.perimeter_bounds[3]
+            ):
+                # Not sure if this can actually happen
+                print("Bin rotated -_-")
+                x, y, w, h = y, x, h, w
+
+            shape = box(x, y, x + w, y + h)
+            check_shape = shape.buffer(-0.001)
+            for other in pack_check:
+                if check_shape.intersects(other):
+                    raise Exception("Packing failed")
+
+            pack_check.append(shape)
+
+            x_err = model.width - w
+            y_err = model.height - h
+
+            rot = 0
+            if x_err != 0 or y_err != 0:
+                # The rectangle must be rotated
+                rot = -90
+
+            x_pos = x + b * self.perimeter_bounds[2]
+
+            if rot > 0:
+                x_pos += h
+
+            layout[model] = (x_pos, y, rot)
 
         return layout
 
@@ -460,11 +512,11 @@ class MultipartModel:
 
         layout = self.get_layout()
 
-        for model in self.models:
+        for i, model in enumerate(self.models):
             if len(model.parts) == 0:
                 continue
 
-            x, y = layout[model]
+            x, y, rot = layout[model]
 
             for part in model.parts:
                 if isinstance(part.polygon, Polygon):
@@ -474,24 +526,20 @@ class MultipartModel:
 
                 for polygon in polygons:
                     polygon = shapely_affinity.translate(
-                        polygon,
+                        shapely_affinity.rotate(polygon, rot, origin=(0, 0)),
                         x,
                         y,
                     )
 
                     msp.add_lwpolyline(
                         list(polygon.exterior.coords),
-                        dxfattribs={
-                            "layer": part.layer,
-                        },
+                        dxfattribs={"color": i},
                     )
 
                     for interior in polygon.interiors:
                         msp.add_lwpolyline(
                             list(interior.coords),
-                            dxfattribs={
-                                "layer": part.layer,
-                            },
+                            dxfattribs={"color": i},
                         )
 
         doc.saveas(output_path)
