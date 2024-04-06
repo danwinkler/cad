@@ -43,6 +43,8 @@ watchdog = "^3.0.0"
 rectpack = "^0.2.2"
 crochet = "^2.1.1"
 dill = "^0.3.7"
+svgpath2mpl = "^1.0.0"
+ziafont = "^0.7"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"

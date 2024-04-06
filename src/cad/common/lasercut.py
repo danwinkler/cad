@@ -1,6 +1,7 @@
 """
 TODO: eventually move these laser cut helpers to the top level common module
 """
+
 import pathlib
 import subprocess
 import typing
@@ -512,6 +513,9 @@ class MultipartModel:
 
         layout = self.get_layout()
 
+        if layout is None:
+            raise Exception("Packing failed")
+
         for i, model in enumerate(self.models):
             if len(model.parts) == 0:
                 continue
@@ -615,7 +619,7 @@ class MultipartModel:
         return total
 
 
-def get_text_polygon(text):
+def get_text_polygon(text, ttf_font=None):
     """
     For a given string returns a shapely polygon representing the text.
 
@@ -623,7 +627,8 @@ def get_text_polygon(text):
 
     TODO: allow specifying font size in mm
     """
-    ttf_font = TTFont(str(pathlib.Path(__file__).parent / "Roboto-Regular.ttf"))
+    if ttf_font is None:
+        ttf_font = TTFont(str(pathlib.Path(__file__).parent / "Roboto-Regular.ttf"))
 
     # Create an empty list to store the glyph shapes
     glyph_shapes = []
