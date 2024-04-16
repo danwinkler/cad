@@ -70,28 +70,54 @@ def bin(
 
     box = outer_box_shape - inner_box_shape
 
+    # TODO: dry some of this up
+    # Positive ribs
     if x_ribs:
+        inner_rad = wall_thickness + 1
+        outer_rad = inner_rad + wall_thickness
         for i in range(x_ribs):
             x_pos = (i + 1) * width / (x_ribs + 1)
             box += intersection()(
-                translate([x_pos, 0, wall_thickness - 1])(
-                    rotate([-90, 0, 0])(
-                        cylinder(r=wall_thickness * 2, h=length, segments=32)
-                    )
+                translate([x_pos, 0, 0])(
+                    rotate([-90, 0, 0])(cylinder(r=outer_rad, h=length, segments=32))
                 ),
                 outer_box_shape,
             )
+
+    if y_ribs:
+        inner_rad = wall_thickness + 1
+        outer_rad = inner_rad + wall_thickness
+        for i in range(y_ribs):
+            y_pos = (i + 1) * length / (y_ribs + 1)
+            box += intersection()(
+                translate([0, y_pos, 0])(
+                    rotate([0, 90, 0])(cylinder(r=outer_rad, h=width, segments=32))
+                ),
+                outer_box_shape,
+            )
+
+    # Negative ribs
+    if x_ribs:
+        inner_rad = wall_thickness + 1
+        outer_rad = inner_rad + wall_thickness
+        for i in range(x_ribs):
             box -= translate([x_pos, 0, 0])(
-                rotate([-90, 0, 0])(
-                    cylinder(r=wall_thickness + 1, h=length, segments=32)
-                )
+                rotate([-90, 0, 0])(cylinder(r=inner_rad, h=length, segments=32))
+            )
+
+    if y_ribs:
+        inner_rad = wall_thickness + 1
+        outer_rad = inner_rad + wall_thickness
+        for i in range(y_ribs):
+            box -= translate([0, y_pos, 0])(
+                rotate([0, 90, 0])(cylinder(r=inner_rad, h=width, segments=32))
             )
 
     return box
 
 
 # parts.append(bin(width=33.5, length=33.5, depth=44))
-parts.append(bin(width=67, length=33.5, depth=44, x_ribs=1))
+parts.append(bin(width=67, length=33.5, depth=44, x_ribs=1, y_ribs=1))
 
 print("Saving File")
 with open(__file__ + ".scad", "w") as f:

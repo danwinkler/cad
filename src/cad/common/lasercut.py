@@ -441,7 +441,7 @@ class MultipartModel:
                 )
             )
 
-        packer = rectpack.newPacker()
+        packer = rectpack.newPacker(rotation=False)
 
         for rect in rects:
             packer.add_rect(*rect)
@@ -488,7 +488,7 @@ class MultipartModel:
             y_err = model.height - h
 
             rot = 0
-            if x_err != 0 or y_err != 0:
+            if abs(x_err) > 0.01 or abs(y_err) > 0.01:
                 # The rectangle must be rotated
                 rot = -90
 
@@ -516,6 +516,8 @@ class MultipartModel:
         if layout is None:
             raise Exception("Packing failed")
 
+        layer_to_color = {layer: i for i, layer in enumerate(self.layers)}
+
         for i, model in enumerate(self.models):
             if len(model.parts) == 0:
                 continue
@@ -537,13 +539,13 @@ class MultipartModel:
 
                     msp.add_lwpolyline(
                         list(polygon.exterior.coords),
-                        dxfattribs={"color": i},
+                        dxfattribs={"color": layer_to_color[part.layer]},
                     )
 
                     for interior in polygon.interiors:
                         msp.add_lwpolyline(
                             list(interior.coords),
-                            dxfattribs={"color": i},
+                            dxfattribs={"color": layer_to_color[part.layer]},
                         )
 
         doc.saveas(output_path)
