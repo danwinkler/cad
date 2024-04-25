@@ -420,7 +420,7 @@ class MultipartModel:
         for part in model.parts:
             write_polygon(part, part.polygon)
 
-    def get_layout(self):
+    def get_layout(self, margin=0):
         print("Packing...")
         layout = {}
 
@@ -435,8 +435,8 @@ class MultipartModel:
 
             rects.append(
                 (
-                    rectpack.float2dec(model.width, 3),
-                    rectpack.float2dec(model.height, 3),
+                    rectpack.float2dec(model.width + margin * 2, 3),
+                    rectpack.float2dec(model.height + margin * 2, 3),
                     i,
                 )
             )
@@ -461,8 +461,8 @@ class MultipartModel:
 
             x = float(x)
             y = float(y)
-            w = float(w)
-            h = float(h)
+            w = float(w) - margin * 2
+            h = float(h) - margin * 2
 
             print(f"Model {rid} at {x}, {y} {w}x{h}")
 
@@ -501,7 +501,7 @@ class MultipartModel:
 
         return layout
 
-    def render_single_dxf(self, output_path):
+    def render_single_dxf(self, output_path, margin=1):
         doc = ezdxf.new("R2010")
 
         doc.units = ezdxf.units.MM
@@ -511,7 +511,7 @@ class MultipartModel:
 
         msp = doc.modelspace()
 
-        layout = self.get_layout()
+        layout = self.get_layout(margin=margin)
 
         if layout is None:
             raise Exception("Packing failed")

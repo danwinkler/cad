@@ -142,8 +142,13 @@ class Sign:
             # Make holes
             center = (sign_outline.bounds[0] + sign_outline.bounds[2]) / 2
             hole_x_off = 30
+
+            if sign_outline.bounds[2] - sign_outline.bounds[0] < 100:
+                hole_x_off = 20
+
             hole_y_off = 30
             hole = box(0, 0, model.default_thickness + 1, hole_height)
+            hole = translate(hole, xoff=-hole.bounds[2] / 2)
 
             holes = unary_union(
                 [
@@ -164,12 +169,12 @@ class Sign:
             hanger_width = 12
             hook_width = hole_height - 2
             arc_rad = 30
-            hanger = [
+            hanger_parts = [
                 box(0, 0, hanger_width * 2 + wood_width, hanger_width),
                 box(0, 0, hanger_width, 40),
                 translate(box(0, 0, hanger_width, 60), xoff=hanger_width + wood_width),
                 arc(
-                    45,
+                    55,
                     90,
                     arc_rad,
                     center=(
@@ -179,9 +184,9 @@ class Sign:
                 ).buffer(hook_width / 2),
             ]
 
-            hanger = unary_union(hanger)
-
             for i in range(2):
+                hanger = unary_union(hanger_parts)
+
                 hanger_model = Model()
                 hanger_model.add_poly(hanger)
 
@@ -200,7 +205,7 @@ texts = [
     "Sungold",
 ]
 
-texts = texts[0:][:1]
+texts = texts[3:][:2]
 
 m = Sign(texts)
 
