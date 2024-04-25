@@ -15,9 +15,11 @@ import ezdxf.units
 import numpy as np
 import rectpack
 import solid
+import svgpath2mpl
 import svgwrite
 import svgwrite.shapes
 import trimesh
+import ziafont
 from fontTools.ttLib import TTFont
 from shapely import affinity as shapely_affinity
 from shapely import ops as shapely_ops
@@ -684,6 +686,64 @@ def get_text_polygon(text, ttf_font=None):
     final_shape = shapely_ops.unary_union(glyph_shapes)
 
     return final_shape
+
+
+class FontRenderer:
+    def __init__(self, path: pathlib.Path):
+        self.ziafont = ziafont.font.Font(path.resolve())
+
+    def render(self, text: str, font_scale=1):
+        """
+        Currently this only works for single characters, as I don't have a good way to determine whic
+        """
+
+        polys = []
+        cur_x = 0
+        kerning = 1 * font_scale
+        words = text.split(" ")
+        for word in words:
+            for letter in word:
+                font_text = self.ziafont.text(letter)
+                s = font_text.svgxml()
+                svg_symbols = s.findall("symbol")
+                for symbol in svg_symbols:
+                    poly = self.symbol_to_polygon(symbol, font_scale)
+                    poly = shapely_affinity.scale(
+                        poly, xfact=1, yfact=-1, origin=(0, 0)
+                    )
+                    poly = shapely_affinity.translate(poly, xoff=cur_x, yoff=0)
+                    polys.append(poly)
+                    cur_x += poly.bounds[2] - poly.bounds[0] + kerning
+
+            cur_x += kerning * 3
+
+        return shapely_ops.unary_union(polys)
+
+    def symbol_to_polygon(self, symbol, font_scale):
+        svg_paths = symbol.findall("path")
+        polys = []
+        for svg_path in svg_paths:
+            path = svgpath2mpl.parse_path(svg_path.attrib["d"])
+
+            path.vertices = path.vertices * font_scale
+
+            for mpl_poly in path.to_polygons(closed_only=False):
+                poly = Polygon(mpl_poly)
+                polys.append(poly)
+
+        for i in range(len(polys)):
+            for j in range(i + 1, len(polys)):
+                a = polys[i]
+                b = polys[j]
+
+                if not a or not b:
+                    continue
+
+                if a.contains(b):
+                    polys[i] = a - b
+                    polys[j] = None
+
+        return shapely_ops.unary_union([p for p in polys if p])
 
 
 class BendyRenderer(AffineTransformRenderer):
