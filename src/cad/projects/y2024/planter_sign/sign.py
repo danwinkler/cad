@@ -169,24 +169,48 @@ class Sign:
             hanger_width = 12
             hook_width = hole_height - 2
             arc_rad = 30
+
+            hanger_tab_width = 10
+
             hanger_parts = [
-                box(0, 0, hanger_width * 2 + wood_width, hanger_width),
+                box(
+                    0,
+                    0,
+                    hanger_width
+                    + wood_width
+                    + model.default_thickness
+                    + hanger_tab_width,
+                    hanger_width,
+                ),
                 box(0, 0, hanger_width, 40),
-                translate(box(0, 0, hanger_width, 60), xoff=hanger_width + wood_width),
-                arc(
-                    55,
-                    90,
-                    arc_rad,
-                    center=(
-                        hanger_width * 2 + wood_width,
-                        60 - arc_rad - hook_width / 2,
+                translate(
+                    Polygon(
+                        [
+                            (0, 0),
+                            (hanger_tab_width, 0),
+                            (0, 2),
+                        ]
                     ),
-                ).buffer(hook_width / 2),
+                    xoff=hanger_width + wood_width + model.default_thickness,
+                    yoff=hanger_width,
+                ),
             ]
 
-            for i in range(2):
-                hanger = unary_union(hanger_parts)
+            cutout_depth = hanger_tab_width + 5
+            cutout_width = 3
+            cutout = translate(
+                box(0, 0, cutout_depth, cutout_width),
+                xoff=hanger_width
+                + wood_width
+                + model.default_thickness
+                + hanger_tab_width
+                - cutout_depth,
+                yoff=(hanger_width - cutout_width) / 2,
+            )
 
+            hanger = unary_union(hanger_parts) - cutout
+
+            for i in range(2):
                 hanger_model = Model()
                 hanger_model.add_poly(hanger)
 
