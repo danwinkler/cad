@@ -335,6 +335,7 @@ class MultipartModel:
         self.models = []
         self.default_thickness = default_thickness
         self.perimeter_bounds = (0, 0, 600, 300)
+        self.n_bins = 1
 
     @property
     def layers(self):
@@ -429,7 +430,7 @@ class MultipartModel:
         rects = []
         bins = [
             (self.perimeter_bounds[2], self.perimeter_bounds[3], float("inf"))
-            for _ in range(1)
+            for _ in range(self.n_bins)
         ]
         for i, model in enumerate(self.models):
             if len(model.parts) == 0:
@@ -455,7 +456,7 @@ class MultipartModel:
 
         packed = packer.rect_list()
 
-        pack_check = []
+        pack_check = defaultdict(list)
 
         for rect in packed:
             b, x, y, w, h, rid = rect
@@ -466,7 +467,7 @@ class MultipartModel:
             w = float(w) - margin * 2
             h = float(h) - margin * 2
 
-            print(f"Model {rid} at {x}, {y} {w}x{h}")
+            print(f"Model {rid} on bin {b} at {x}, {y} {w}x{h}")
 
             bin = packer[b]
 
@@ -480,11 +481,11 @@ class MultipartModel:
 
             shape = box(x, y, x + w, y + h)
             check_shape = shape.buffer(-0.001)
-            for other in pack_check:
+            for other in pack_check[b]:
                 if check_shape.intersects(other):
                     raise Exception("Packing failed")
 
-            pack_check.append(shape)
+            pack_check[b].append(shape)
 
             x_err = model.width - w
             y_err = model.height - h

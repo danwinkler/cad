@@ -54,20 +54,14 @@ class ModelGen:
 
         self.gear_base_radius = 40
 
+        self.bolt_radius = 4
         self.bearing_radius = 11
         self.bearing_thickness = 7
-        self.bearing_pressfit_offset = 0.11
+        self.bearing_pressfit_offset = 0.1
 
         # This is the distance from the outer edge of the bearing to the point where the inner part of the bearing starts to move
         # relative to the outer part. There's probably a better name for this
         self.bearing_outer_to_inner_offset = 2
-
-        self.mount_screw_offset = 15
-        self.mount_margin = 3
-        self.mount_screw_radius = 1.75
-        self.mount_screw_head_radius = 2.95
-        self.mount_screw_head_height = 3.2
-        self.mount_screw_nut_rad = 3.15  # Flat to flat hexagon
 
     def create_escapement_gear_shape(self, base_radius, tooth_length, a, b, num_teeth):
         """
@@ -234,10 +228,8 @@ class ModelGen:
 
         baseplate = LineString([(0, 0), (0, self.gear_base_radius + 30)]).buffer(20)
 
-        baseplate -= Point(0, 0).buffer(self.mount_screw_radius)
-        baseplate -= Point(0, self.gear_base_radius + 30).buffer(
-            self.mount_screw_radius
-        )
+        baseplate -= Point(0, 0).buffer(self.bolt_radius)
+        baseplate -= Point(0, self.gear_base_radius + 30).buffer(self.bolt_radius)
 
         m.add_poly(baseplate)
 
@@ -300,7 +292,7 @@ class ModelGen:
             z=-self.wood_thickness
         ).color(*get_color())
 
-        model.add_model(self.bearing_pressfit_test()).renderer.translate(x=100)
+        # model.add_model(self.bearing_pressfit_test()).renderer.translate(x=100)
 
         return model
 
@@ -311,8 +303,8 @@ model = part.get_multi_model()
 
 top_level_geom = model.render_scad()
 
-# output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_parts")
-# model.render_parts(output_dir)
+output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_parts")
+model.render_parts(output_dir)
 
 model.render_single_dxf(__file__ + ".dxf")
 

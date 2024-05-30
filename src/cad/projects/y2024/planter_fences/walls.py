@@ -30,6 +30,8 @@ from cad.common.lasercut import (
 
 
 class Walls:
+    TAB_WIDTH = 10
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -80,7 +82,7 @@ class Walls:
         for i in range(1, 10):
             circle = scale(
                 Point(section_width / 2, 0).buffer(
-                    section_height - inner_ring_offset + i * 15
+                    section_height - inner_ring_offset + i * 17
                 ),
                 xfact=circle_xfact,
                 yfact=1,
@@ -102,8 +104,7 @@ class Walls:
 
         tab_x_offset = 10
 
-        tab_width = 10
-        tab_height = 5 - 0.2  # 0.2 is the kerf
+        tab_height = 5 - 0.3  # 0.3 is the kerf
 
         for tab_y in tab_positions:
             tab = unary_union(
@@ -111,11 +112,11 @@ class Walls:
                     box(
                         tab_x_offset,
                         tab_y,
-                        tab_x_offset + tab_width,
+                        tab_x_offset + Walls.TAB_WIDTH,
                         tab_y + tab_height,
                     ),
                     box(
-                        section_width - tab_x_offset - tab_width,
+                        section_width - tab_x_offset - Walls.TAB_WIDTH,
                         tab_y,
                         section_width - tab_x_offset,
                         tab_y + tab_height,
@@ -127,6 +128,50 @@ class Walls:
 
             poly -= tab
 
+        # Remove holes that are too small
+        min_area = 5
+        poly = Polygon(
+            poly.exterior.coords,
+            [i for i in poly.interiors if Polygon(i).area > min_area],
+        )
+
+        m.add_poly(poly)
+
+        model.add_model(m)
+
+        return model
+
+
+class Hook:
+    def __init__(self):
+        pass
+
+    def get_multi_model(self):
+        model = MultipartModel(5)
+
+        model.perimeter_bounds = (0, 0, 580, 275)
+
+        m = Model()
+
+        poly = box(0, 0, Walls.TAB_WIDTH, 20)
+
+        hole_rad = 6.4
+
+        tab_length = 5
+        hole_y_pos = tab_length + 3 + hole_rad
+
+        hole = Point(Walls.TAB_WIDTH / 2, hole_y_pos).buffer(hole_rad)
+
+        hole_rim_size = 5
+
+        poly = unary_union([hole.buffer(hole_rim_size), poly])
+
+        poly -= hole
+
+        # Cut out area next to tab
+        poly -= box(Walls.TAB_WIDTH, 0, Walls.TAB_WIDTH * 2, tab_length)
+        poly -= box(-Walls.TAB_WIDTH, 0, 0, tab_length)
+
         m.add_poly(poly)
 
         model.add_model(m)
@@ -135,6 +180,8 @@ class Walls:
 
 
 m = Walls(1111, 431)
+
+# m = Hook()
 
 model = m.get_multi_model()
 
