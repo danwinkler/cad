@@ -46,6 +46,7 @@ dill = "^0.3.7"
 svgpath2mpl = "^1.0.0"
 ziafont = "^0.7"
 pygame = "^2.5.2"
+bezier = "^2023.7.28"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
