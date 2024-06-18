@@ -357,7 +357,7 @@ class MultipartModel:
 
         return renderer
 
-    def add_model(self, model):
+    def add_model(self, model) -> Model:
         self.models.append(model)
         return model
 
