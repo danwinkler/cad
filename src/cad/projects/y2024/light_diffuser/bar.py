@@ -38,38 +38,28 @@ class Diffuser:
     ):
         self.segment_length = 4 * 12 * in_to_mm / 3
         self.segment_height = 3.3 * in_to_mm
-        self.raindrop_rad = 2
-        self.raindrop_tail_dist = 4
+        self.circle_rad = 1.5
 
         print(f"Segment Length: {self.segment_length}")
 
-    def make_raindrop(self, x, y, raindrop_rad=2, raindrop_tail_dist=4):
-        circle = Point(x, y).buffer(raindrop_rad)
-
-        top_point = Point(x, y + raindrop_tail_dist)
-
-        mpt = MultiPoint([top_point] + list(circle.exterior.coords))
-
-        return rotate(Polygon(mpt.convex_hull), 45, origin=(x, y))
-
-    def make_panel(self, seed, raindrop_rad=2, raindrop_tail_dist=4):
+    def make_panel(self, seed, circle_rad=2, x_offset=0):
         random.seed(seed)
 
         m = Model()
 
         panel = box(0, 0, self.segment_length, self.segment_height)
 
-        margin_x = self.raindrop_rad + 5
+        margin_x = self.circle_rad + 5
         margin_top = 0.75 * in_to_mm
         margin_bottom = 10
-
-        min_dist = 8
 
         index = rtree.index.Index()
         points = []
         for i in tqdm(range(3000)):
             x = random.uniform(margin_x, self.segment_length - margin_x)
             y = random.uniform(margin_bottom, self.segment_height - margin_top)
+
+            min_dist = 5 + math.sin((x + x_offset - y * 1.2) * 0.05) * 1.5
 
             nearest = list(index.nearest((x, y), 1))
 
@@ -84,12 +74,7 @@ class Diffuser:
             points.append((x, y))
             index.insert(len(points) - 1, (x, y, x, y))
 
-        panel = panel - unary_union(
-            [
-                self.make_raindrop(x, y, raindrop_rad, raindrop_tail_dist)
-                for x, y in points
-            ]
-        )
+        panel = panel - unary_union([Point(x, y).buffer(circle_rad) for x, y in points])
 
         m.add_poly(panel)
 
@@ -101,10 +86,10 @@ class Diffuser:
 
         model.perimeter_bounds = (0, 0, 580, 295)
 
-        model.add_model(self.make_panel(0, self.raindrop_rad, self.raindrop_tail_dist))
-        model.add_model(
-            self.make_panel(0, self.raindrop_rad + 1, self.raindrop_tail_dist + 2)
-        ).renderer.translate(z=model.default_thickness)
+        for i in range(3):
+            model.add_model(
+                self.make_panel(0, self.circle_rad, x_offset=i * self.segment_length)
+            ).renderer.translate(x=i * self.segment_length)
 
         return model
 
