@@ -233,6 +233,10 @@ class AffineTransformRenderer:
         self.stack.append(solid.color((r, g, b)))
         return self
 
+    def multmatrix(self, matrix):
+        self.stack.append(solid.multmatrix(matrix))
+        return self
+
     def transform(self, polygon_or_object):
         if isinstance(polygon_or_object, (Polygon, MultiPolygon)):
             polygon_or_object = solid.linear_extrude(self._thickness)(
