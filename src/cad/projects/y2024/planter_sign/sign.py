@@ -166,7 +166,7 @@ class Sign:
 
             # Hanger
             wood_width = 18
-            hanger_width = 12
+            hanger_width = 12.4
             hook_width = hole_height - 2
             arc_rad = 30
 
@@ -188,7 +188,7 @@ class Sign:
                         [
                             (0, 0),
                             (hanger_tab_width, 0),
-                            (0, 2),
+                            (0, 1),
                         ]
                     ),
                     xoff=hanger_width + wood_width + model.default_thickness,
@@ -196,7 +196,7 @@ class Sign:
                 ),
             ]
 
-            cutout_depth = hanger_tab_width + 5
+            cutout_depth = hanger_tab_width + 10
             cutout_width = 3
             cutout = translate(
                 box(0, 0, cutout_depth, cutout_width),
@@ -229,7 +229,13 @@ texts = [
     "Sungold",
 ]
 
-texts = texts[3:][:2]
+texts = [
+    "Habanero",
+    "Poblano",
+    "???",
+]
+
+# texts = texts[3:][:2]
 
 m = Sign(texts)
 

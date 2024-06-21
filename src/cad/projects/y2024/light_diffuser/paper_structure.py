@@ -41,14 +41,26 @@ class Diffuser:
         self.hook_leg_width = 10
         self.expand_rad = 5
 
+        self.middle_size = 1.5 * in_to_mm
+
+        self.hook_depth = 3.0 * in_to_mm
+        self.hook_cutout_x = self.hook_depth - 20
+
+        self.cutout_wood_width = 4.8
+
+        self.support_length = 8 * in_to_mm
+        self.support_locations = [
+            10,
+            self.support_length / 2 - self.cutout_wood_width / 2,
+            self.support_length - 10 - self.cutout_wood_width,
+        ]
+
         print(f"Segment Length: {self.segment_length}")
 
     def make_hook(self):
         m = Model()
 
-        hook_depth = 4.0 * in_to_mm
         inner_corner_rad = 20
-        middle_size = 1.5 * in_to_mm
 
         hook = (
             unary_union(
@@ -56,10 +68,10 @@ class Diffuser:
                     box(
                         0,
                         self.expand_rad,
-                        hook_depth + self.hook_leg_width,
-                        middle_size + (self.hook_leg_width) * 2 - self.expand_rad,
+                        self.hook_depth + self.hook_leg_width,
+                        self.middle_size + (self.hook_leg_width) * 2 - self.expand_rad,
                     ),
-                    Point(0, middle_size / 2 + self.hook_leg_width).buffer(
+                    Point(0, self.middle_size / 2 + self.hook_leg_width).buffer(
                         2.8 * in_to_mm / 2
                     ),
                 ]
@@ -69,23 +81,35 @@ class Diffuser:
         )
 
         # cutouts for cross bar
-        cutout_x = hook_depth - 20
+
         cutout = box(
-            cutout_x,
-            middle_size + self.hook_leg_width * 2 - 5,
-            cutout_x + 4.8,
-            middle_size + self.hook_leg_width * 2,
+            self.hook_cutout_x,
+            self.middle_size + self.hook_leg_width * 2 - 5,
+            self.hook_cutout_x + self.cutout_wood_width,
+            self.middle_size + self.hook_leg_width * 2,
         )
 
+        # Cut out interior and right side
         hook = hook - unary_union(
             [
                 hook.buffer(-self.hook_leg_width),
-                box(hook_depth, 0, hook_depth + 2 * in_to_mm, 3 * in_to_mm),
+                box(self.hook_depth, -1, self.hook_depth + 2 * in_to_mm, 3 * in_to_mm),
                 cutout,
             ]
         )
 
         m.add_poly(hook)
+
+        return m
+
+    def make_cross_bar(self):
+        poly = box(0, 0, self.support_length, self.hook_leg_width)
+        for x in self.support_locations:
+            poly = poly - box(x, -1, x + self.cutout_wood_width, 5)
+
+        m = Model()
+
+        m.add_poly(poly)
 
         return m
 
@@ -95,7 +119,16 @@ class Diffuser:
 
         model.perimeter_bounds = (0, 0, 580, 295)
 
-        model.add_model(self.make_hook())
+        for i in self.support_locations:
+            model.add_model(self.make_hook()).renderer.rotate(
+                a=90, v=(1, 0, 0)
+            ).translate(y=i + self.cutout_wood_width)
+
+        model.add_model(self.make_cross_bar()).renderer.rotate(
+            a=90, v=(1, 0, 0)
+        ).rotate(a=90, v=(0, 0, 1)).translate(
+            x=self.hook_cutout_x, z=self.middle_size + self.hook_leg_width
+        )
 
         return model
 
