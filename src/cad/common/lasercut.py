@@ -336,7 +336,7 @@ class SolidModel:
 
 class MultipartModel:
     def __init__(self, default_thickness=5):
-        self.models = []
+        self.models: list[Model] = []
         self.default_thickness = default_thickness
         self.perimeter_bounds = (0, 0, 600, 300)
         self.n_bins = 1
@@ -540,8 +540,8 @@ class MultipartModel:
                 for polygon in polygons:
                     polygon = shapely_affinity.translate(
                         shapely_affinity.rotate(polygon, rot, origin=(0, 0)),
-                        x,
-                        y,
+                        x - model.minx,
+                        y - model.miny,
                     )
 
                     msp.add_lwpolyline(
