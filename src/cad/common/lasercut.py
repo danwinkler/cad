@@ -252,9 +252,9 @@ class AffineTransformRenderer:
 class Model:
     def __init__(self, part=None, thickness=None):
         if part:
-            self.parts = [part]
+            self.parts: list[Part] = [part]
         else:
-            self.parts = []
+            self.parts: list[Part] = []
         self.renderer = AffineTransformRenderer()
         self.thickness = thickness
 
@@ -508,7 +508,7 @@ class MultipartModel:
 
         return layout
 
-    def render_single_dxf(self, output_path, margin=1):
+    def render_single_dxf(self, output_path, margin=1, use_physics_packer=False):
         doc = ezdxf.new("R2010")
 
         doc.units = ezdxf.units.MM
@@ -518,7 +518,12 @@ class MultipartModel:
 
         msp = doc.modelspace()
 
-        layout = self.get_layout(margin=margin)
+        if use_physics_packer:
+            from cad.common import physics_packer
+
+            layout = physics_packer.generate_layout(self)
+        else:
+            layout = self.get_layout(margin=margin)
 
         if layout is None:
             raise Exception("Packing failed")
@@ -527,6 +532,9 @@ class MultipartModel:
 
         for i, model in enumerate(self.models):
             if len(model.parts) == 0:
+                continue
+
+            if model not in layout:
                 continue
 
             x, y, rot = layout[model]

@@ -48,6 +48,7 @@ ziafont = "^0.7"
 pygame = "^2.5.2"
 bezier = "^2023.7.28"
 pyside2 = "^5.15.2.1"
+pymunk = "^6.8.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
