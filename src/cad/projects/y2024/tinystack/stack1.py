@@ -54,11 +54,11 @@ class Diffuser:
         mid_section_size = 10
         small_section_size = 6
 
-        def get_pos(i):
+        def get_pos(i, rad_offset=0):
             angle = i * 360 / diameter_part_count
             angle_rad = math.radians(angle)
-            x = math.cos(angle_rad) * radius
-            y = math.sin(angle_rad) * radius
+            x = math.cos(angle_rad) * (radius + rad_offset)
+            y = math.sin(angle_rad) * (radius + rad_offset)
             return [x, y]
 
         def get_hole(i, rot_offset=0, rad_offset=0):
@@ -69,9 +69,9 @@ class Diffuser:
 
             hole_shape = box(
                 -model.default_thickness / 2 + self.kerf,
-                -hole_width / 2,
+                -hole_width / 2 + self.kerf,
                 model.default_thickness / 2 - self.kerf,
-                hole_width / 2,
+                hole_width / 2 - self.kerf,
             )
 
             return translate(
@@ -261,7 +261,12 @@ class Diffuser:
                 if is_vert_support_a(i, z):
                     # Vertical
                     a = get_pos(i)
-                    b = get_pos((i + 1) % diameter_part_count)
+                    b = get_pos(
+                        (i + 1) % diameter_part_count,
+                        rad_offset=get_tangent_offset(
+                            math.pi * 2 / diameter_part_count
+                        ),
+                    )
 
                     ab_dist = math.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
 
@@ -284,7 +289,12 @@ class Diffuser:
                 elif is_vert_support_b(i, z):
                     # Vertical
                     a = get_pos(i)
-                    b = get_pos((i + 1) % diameter_part_count)
+                    b = get_pos(
+                        (i + 1) % diameter_part_count,
+                        rad_offset=get_tangent_offset(
+                            math.pi * 2 / diameter_part_count
+                        ),
+                    )
 
                     ab_dist = math.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
 
@@ -301,7 +311,12 @@ class Diffuser:
                 elif is_vert_support_c(i, z):
                     # Vertical
                     a = get_pos(i)
-                    b = get_pos((i + 1) % diameter_part_count)
+                    b = get_pos(
+                        (i + 1) % diameter_part_count,
+                        rad_offset=get_tangent_offset(
+                            math.pi * 2 / diameter_part_count
+                        ),
+                    )
 
                     ab_dist = math.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
 
@@ -331,7 +346,7 @@ output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_pa
 
 # model.render_single_svg(__file__ + ".svg")
 model.render_single_dxf(__file__ + ".dxf")
-# model.render_parts(output_dir)
+model.render_parts(output_dir)
 
 print(f"Total Cut Length: {model.get_total_cut_length()}")
 
