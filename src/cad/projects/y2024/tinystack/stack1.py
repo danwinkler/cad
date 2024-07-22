@@ -107,7 +107,9 @@ class Diffuser:
         for z in range(1, stack_height):
             for i in range(diameter_part_count):
                 holes = []
+                support_type = None
                 if is_hori_support_a(i, z):
+                    support_type = "hori_a"
                     for j in range(0, mid_section_size, 2):
                         rot_offset = 0
                         rad_offset = 0
@@ -123,6 +125,7 @@ class Diffuser:
                             )
                         )
                 elif is_hori_support_b(i, z):
+                    support_type = "hori_b"
                     for j in range(0, small_section_size, 2):
                         rot_offset = 0
                         rad_offset = 0
@@ -144,7 +147,7 @@ class Diffuser:
                         )
 
                 if holes:
-                    m = Model()
+                    m = Model(name=f"{support_type}_{i}_{z}")
 
                     holes_shape = unary_union(holes)
 
@@ -190,8 +193,8 @@ class Diffuser:
 
                     model.add_model(m).renderer.translate(z=z * z_step)
 
-                def make_vert(points, rot_offset=0):
-                    m = Model()
+                def make_vert(points, rot_offset=0, name=None):
+                    m = Model(name=name)
 
                     connection_points = [
                         (
@@ -285,7 +288,7 @@ class Diffuser:
                     if z + 1 < stack_height - 1:
                         points.append((0, z_step * 2, "bottom"))
 
-                    make_vert(points)
+                    make_vert(points, name="vert_a")
                 elif is_vert_support_b(i, z):
                     # Vertical
                     a = get_pos(i)
@@ -307,7 +310,7 @@ class Diffuser:
                         (ab_dist, y_dist, "bottom"),
                     ]
 
-                    make_vert(points)
+                    make_vert(points, name="vert_b")
                 elif is_vert_support_c(i, z):
                     # Vertical
                     a = get_pos(i)
@@ -331,7 +334,7 @@ class Diffuser:
                         (-ab_dist, -y_dist, "top"),
                     ]
 
-                    make_vert(points)
+                    make_vert(points, name="vert_c")
 
         return model
 
@@ -345,7 +348,7 @@ top_level_geom = model.render_scad()
 output_dir = pathlib.Path(__file__).parent / (pathlib.Path(__file__).stem + "_parts")
 
 # model.render_single_svg(__file__ + ".svg")
-model.render_single_dxf(__file__ + ".dxf", use_physics_packer=True)
+# model.render_single_dxf(__file__ + ".dxf", use_physics_packer=True)
 model.render_parts(output_dir)
 
 print(f"Total Cut Length: {model.get_total_cut_length()}")

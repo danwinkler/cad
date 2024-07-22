@@ -250,13 +250,14 @@ class AffineTransformRenderer:
 
 
 class Model:
-    def __init__(self, part=None, thickness=None):
+    def __init__(self, part=None, thickness=None, name=None):
         if part:
             self.parts: list[Part] = [part]
         else:
             self.parts: list[Part] = []
         self.renderer = AffineTransformRenderer()
         self.thickness = thickness
+        self.name = name
 
     def add_poly(
         self,
@@ -534,8 +535,8 @@ class MultipartModel:
             if len(model.parts) == 0:
                 continue
 
-            if model not in layout:
-                continue
+            # if model not in layout:
+            #     continue
 
             x, y, rot = layout[model]
 
@@ -590,7 +591,12 @@ class MultipartModel:
 
             self._write_model_into_modelspace(model, msp, layer_to_color)
 
-            doc.saveas(output_path / f"part_{i}.dxf")
+            if model.name is not None:
+                filename = f"{model.name}.dxf"
+            else:
+                filename = f"part_{i}.dxf"
+
+            doc.saveas(output_path / filename)
 
     def render_svgs(self, output_path):
         output_path.mkdir(parents=True, exist_ok=True)

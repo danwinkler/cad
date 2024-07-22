@@ -10,9 +10,7 @@ from cad.common.lasercut import Model, MultipartModel
 
 
 def pack_polygons(polys, n_steps=10000, delta_time=0.01, gravity=(-100, 0), margin=1):
-    body_to_shapely = {}
-
-    rows = 3
+    poly_index_to_body = {}
 
     space = pymunk.Space()
     space.gravity = gravity
@@ -39,7 +37,7 @@ def pack_polygons(polys, n_steps=10000, delta_time=0.01, gravity=(-100, 0), marg
         shape.mass = 1
         shape.friction = 0.1
         space.add(body, shape)
-        body_to_shapely[body] = poly
+        poly_index_to_body[i] = body
 
     for i in tqdm(range(n_steps)):
         space.step(delta_time)
@@ -51,8 +49,9 @@ def pack_polygons(polys, n_steps=10000, delta_time=0.01, gravity=(-100, 0), marg
 
     transform_map = {}
 
-    for body, poly in body_to_shapely.items():
-        transform_map[poly] = body.position, math.degrees(body.angle)
+    for i, poly in enumerate(polys):
+        body = poly_index_to_body[i]
+        transform_map[i] = body.position, math.degrees(body.angle)
         # transformed_poly = rotate(poly, math.degrees(body.angle), origin=(0, 0))
         # transformed_poly = translate(
         #     transformed_poly, xoff=body.position.x, yoff=body.position.y
@@ -65,13 +64,15 @@ def generate_layout(model: MultipartModel):
     layout = {}
 
     pack_polys = []
-    pack_poly_to_model = {}
+    pack_polys_index_by_model_index = {}
 
     for i, m in enumerate(model.models):
         if not isinstance(m, Model):
+            print(f"Skipping {m} as it is not a Model")
             continue
 
         if len(m.parts) == 0:
+            print(f"Skipping {m} as it has no parts")
             continue
 
         parts = []
@@ -80,12 +81,18 @@ def generate_layout(model: MultipartModel):
 
         unioned = unary_union(parts)
         pack_polys.append(unioned)
-        pack_poly_to_model[unioned] = m
+        pack_polys_index_by_model_index[len(pack_polys) - 1] = i
 
     transform_map = pack_polygons(pack_polys)
 
-    for poly, (pos, angle) in transform_map.items():
-        m = pack_poly_to_model[poly]
+    for i, m in enumerate(model.models):
+        if i not in pack_polys_index_by_model_index:
+            continue
+
+        pos, angle = transform_map[pack_polys_index_by_model_index[i]]
+
         layout[m] = pos.x + m.minx, pos.y + m.miny, angle
+
+    assert len(layout) == len(model.models)
 
     return layout
