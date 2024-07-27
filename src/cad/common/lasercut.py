@@ -566,12 +566,17 @@ class MultipartModel:
 
         doc.saveas(output_path)
 
-    def render_parts(self, output_path):
+    def render_parts(self, output_path: pathlib.Path):
         """
         So XTool's software doesn't really like DXF layers, but works great with "layers" specified by color, which it then converts into
         its own layer representation. So we'll just use colors to represent layers.
         """
         output_path.mkdir(parents=True, exist_ok=True)
+
+        # Delete all dxf files in output path first
+        for f in output_path.glob("*.dxf"):
+            f.unlink()
+
         for i, model in enumerate(self.models):
             if hasattr(model, "solids"):
                 # TODO: make each model class responsible for rendering itself

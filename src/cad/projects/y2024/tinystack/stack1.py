@@ -147,7 +147,7 @@ class Diffuser:
                         )
 
                 if holes:
-                    m = Model(name=f"{support_type}_{i}_{z}")
+                    m = Model(name=f"{z}_{support_type}_{i}")
 
                     holes_shape = unary_union(holes)
 
@@ -288,7 +288,7 @@ class Diffuser:
                     if z + 1 < stack_height - 1:
                         points.append((0, z_step * 2, "bottom"))
 
-                    make_vert(points, name="vert_a")
+                    make_vert(points, name=f"vert_a_{len(points)}")
                 elif is_vert_support_b(i, z):
                     # Vertical
                     a = get_pos(i)
