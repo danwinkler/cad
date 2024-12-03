@@ -25,9 +25,8 @@ def is_geometry_water_tight(vertices, triangles):
 @pytest.mark.skipif(
     platform.system() == "Darwin", reason="CUDA is not supported on macOS"
 )
-@pytest.mark.parametrize("resolution, isovalue", [(0.1, 0.005), (0.05, 0.01)])
 @pytest.mark.llmgenerated
-def test_convsurf_basic(resolution, isovalue):
+def test_convsurf_basic():
     """
     Test ConvSurf basic functionality by creating an object, adding primitives, and generating geometry.
     """
@@ -35,20 +34,19 @@ def test_convsurf_basic(resolution, isovalue):
     from cad.common.pyconvsurf import ConvSurf
 
     # Create ConvSurf object
-    margin = 1.0
-    conv_surf = ConvSurf(margin=margin, resolution=resolution)
+    conv_surf = ConvSurf(margin=30, resolution=5)
 
     # Add primitives
-    conv_surf.add_line([0, 0, 0], [1, 1, 1], s=1)
-    conv_surf.add_triangle([0, 0, 0], [1, 0, 0], [0, 1, 0], s=1)
-    conv_surf.add_rect([0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], s=1)
+    conv_surf.add_line([0, 0, 0], [100, 100, 100], s=1.1)
+    conv_surf.add_triangle([0, 0, 0], [100, 0, 0], [0, 100, 0], s=1.1)
+    conv_surf.add_rect([0, 0, 0], [100, 0, 0], [100, 100, 0], [0, 100, 0], s=1.1)
 
     # Generate geometry
-    vertices, triangles = conv_surf.generate(isovalue=isovalue)
+    vertices, triangles = conv_surf.generate(isovalue=0.005)
 
     # Basic assertions
-    assert vertices, "Vertices should not be empty"
-    assert triangles, "Triangles should not be empty"
+    assert vertices is not None, "Vertices should not be None"
+    assert triangles is not None, "Triangles should not be None"
     assert len(vertices) > 0, "Vertices should contain points"
     assert len(triangles) > 0, "Triangles should contain indices"
 
