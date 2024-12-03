@@ -1,3 +1,4 @@
+import platform
 import subprocess
 from pathlib import Path
 
@@ -21,7 +22,10 @@ def get_scad_files(path):
 
 
 def capture_screenshot(scad_file, image_path):
-    pgm = "C:\Program Files\OpenSCAD\openscad.exe"
+    if platform.system() == "Windows":
+        pgm = "C:\Program Files\OpenSCAD\openscad.exe"
+    elif platform.system() == "Darwin":
+        pgm = "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD"
     subprocess.call([pgm, "-o", image_path, scad_file])
 
 
@@ -51,6 +55,16 @@ def main():
 
     # Generate grid of screenshots
     images = list((BASE_DIR / "utils" / "screenshotter" / "images").rglob("*.png"))
+
+    # Sort images by reverse year
+    # Images start with either "YYYY" or "yYYYY" (literally the letter y)
+    def get_year_from_filename(image_filename):
+        if image_filename[0] == "y":
+            return int(image_filename[1:5])
+        return int(image_filename[:4])
+
+    images.sort(key=lambda x: get_year_from_filename(x.name), reverse=True)
+
     image_size = 150
     grid_width = 5
     grid_height = len(images) // grid_width
