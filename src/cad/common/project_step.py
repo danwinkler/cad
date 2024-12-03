@@ -1,3 +1,9 @@
+"""
+Project step allows recording snapshots of geometry, images, etc during the execution of a model script. 
+
+This is mostly used for capturing intermediate steps such that they can then be added to a blog.
+"""
+
 from dataclasses import dataclass
 
 import aggdraw

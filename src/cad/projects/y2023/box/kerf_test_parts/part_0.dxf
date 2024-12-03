@@ -493,7 +493,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2460255.652638889
+2460647.7480439814
   9
 $TDUCREATE
  40
@@ -501,7 +501,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2460255.652638889
+2460647.7480439814
   9
 $TDUUPDATE
  40
@@ -933,11 +933,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{B9B6015D-3753-4352-B996-3C715301B40D}
+{EBF154B5-8669-4C7C-9DFE-E1E66A020EDA}
   9
 $VERSIONGUID
   2
-{DCB9A5F4-AB1E-423F-B066-32FC5AEC13B4}
+{A3385095-A18D-475D-99B2-9D619977C7C2}
   9
 $EXTNAMES
 290
@@ -965,7 +965,7 @@ $HIDETEXT
   9
 $XCLIPFRAME
 280
-0
+1
   9
 $HALOGAP
 280
@@ -2037,7 +2037,7 @@ AcDbEntity
   8
 0
  62
-0
+1
 100
 AcDbPolyline
  90
@@ -2115,7 +2115,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2297,7 +2297,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2411,7 +2411,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2469,7 +2469,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2583,7 +2583,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2641,7 +2641,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2679,7 +2679,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2765,7 +2765,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2803,7 +2803,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -2921,7 +2921,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3039,7 +3039,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3093,7 +3093,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3131,7 +3131,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3185,7 +3185,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3267,7 +3267,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3369,7 +3369,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3487,7 +3487,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3525,7 +3525,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3563,7 +3563,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3705,7 +3705,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -3887,7 +3887,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4001,7 +4001,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4059,7 +4059,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4241,7 +4241,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4343,7 +4343,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4473,7 +4473,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4547,7 +4547,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4613,7 +4613,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4655,7 +4655,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4729,7 +4729,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4767,7 +4767,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4805,7 +4805,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4891,7 +4891,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -4993,7 +4993,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5175,7 +5175,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5329,7 +5329,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5395,7 +5395,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5509,7 +5509,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5567,7 +5567,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5653,7 +5653,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5771,7 +5771,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5865,7 +5865,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -5943,7 +5943,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6017,7 +6017,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6135,7 +6135,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6173,7 +6173,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6211,7 +6211,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6249,7 +6249,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6363,7 +6363,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6421,7 +6421,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6587,7 +6587,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6689,7 +6689,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6807,7 +6807,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6885,7 +6885,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -6963,7 +6963,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -7009,7 +7009,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -7055,7 +7055,7 @@ AcDbEntity
   8
 0
  62
-1
+0
 100
 AcDbPolyline
  90
@@ -7332,8 +7332,6 @@ D
 AcDbPlotSettings
   1
 
-  2
-Adobe PDF
   4
 A3
   6
@@ -7458,8 +7456,6 @@ D
 AcDbPlotSettings
   1
 
-  2
-Adobe PDF
   4
 A3
   6
@@ -8111,7 +8107,7 @@ DictionaryVariables
 280
 0
   1
-1.1.1 @ 2023-11-06T21:39:48.112538+00:00
+1.3.2 @ 2024-12-03T01:57:11.388690+00:00
   0
 DICTIONARYVAR
   5
@@ -8123,7 +8119,7 @@ DictionaryVariables
 280
 0
   1
-1.1.1 @ 2023-11-06T21:39:48.127974+00:00
+1.3.2 @ 2024-12-03T01:57:11.394412+00:00
   0
 ENDSEC
   0

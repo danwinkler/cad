@@ -52,7 +52,14 @@ pymunk = "^6.8.1"
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 ipykernel = "^6.26.0"
+pytest = "^8.3.4"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+norecursedirs = ".venv *.egg-info .git"
+markers = [
+    "llmgenerated: tests generated entirely or almost entirely by an llm"
+]

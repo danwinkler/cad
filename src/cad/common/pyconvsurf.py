@@ -1,9 +1,22 @@
-import time
+"""
+This is a python (using cuda through numba) implementation of convolution surfaces, 
+specifically from "Creating and Rendering Convolution Surfaces" (1997), by Jon McCormack and Andrei Sheerstyuk.
+
+Importing this module will take a few seconds, as on import the cuda functions are compiled.
+
+Most likely what you want to do is instantiate a ConvSurf object, add some lines, triangles or other primitives to it, 
+and then call generate to get vertices and triangles. 
+
+You'll have to play around to find good p values for the primitives, and a good isovalue for the generate call.
+"""
+
 import math
+import time
+
+import mcubes
 import numba
 import numpy as np
-from numba import float32, float64, guvectorize, njit, vectorize, cuda
-import mcubes
+from numba import cuda, float32, float64, guvectorize, njit, vectorize
 
 
 @cuda.jit(device=True, inline=True)
