@@ -103,6 +103,45 @@ def find_max_y_at_x(polygon, x):
     return max_y
 
 
+def find_top_attachment_points_for_shape(poly: MultiPolygon, ring_rad: float):
+    # Step 1: Chop off everything on the shape except for a bit at the top
+    cut_poly = box(
+        poly.bounds[0], poly.bounds[1], poly.bounds[2], poly.bounds[3] - ring_rad
+    )
+
+    top_parts = poly - cut_poly
+
+    x_positions = []
+
+    if not isinstance(top_parts, MultiPolygon):
+        top_parts = MultiPolygon(polygons=[top_parts])
+
+    # Step 2: Find top sections
+    if len(top_parts.geoms) == 1:
+        # The poly only has a single continous part at the top. We'd prefer to have two attachment points,
+        # but we can only do that if the size of the part at the top is big enough.
+        top_poly = top_parts.geoms[0]
+
+        top_width = top_poly.bounds[2] - top_poly.bounds[0]
+
+        if top_width > ring_rad * 10:
+            # We have space for two points!
+            x_positions = [
+                top_poly.bounds[0] + ring_rad * 3,
+                top_poly.bounds[1] - ring_rad * 3,
+            ]
+        else:
+            # We'll have to use just one attachment point
+            x_positions = [top_poly.bounds[0] + top_width / 2]
+    else:
+        for geom in top_parts.geoms:
+            geom_width = geom.bounds[2] - geom.bounds[0]
+
+            x_positions.append(geom.bounds[0] + geom_width / 2)
+
+    return [Point(x_pos, find_max_y_at_x(poly, x_pos)) for x_pos in x_positions]
+
+
 def save_mask(text_poly: MultiPolygon, letter):
     # Translate the text polygon such that the lower left corner is at the origin
     text_poly = translate(
@@ -164,7 +203,12 @@ class Letters:
 
         double_ring_letters = "HY"
 
-        svgfont = FontRenderer(pathlib.Path(__file__).parent / "Roboto-Black.otf")
+        svgfont = FontRenderer(
+            pathlib.Path(__file__).parent.parent.parent
+            / "y2024"
+            / "lasercut_letters"
+            / "Roboto-Black.otf"
+        )
 
         for i, c in enumerate(text):
             if c == " ":
@@ -187,28 +231,14 @@ class Letters:
 
             # save_mask(text_poly, c)
 
-            if c in double_ring_letters:
-                x_positions = [
-                    text_poly.bounds[0] + ring_outer_rad,
-                    text_poly.bounds[2] - ring_outer_rad,
-                ]
-                for x in x_positions:
-                    midpoint_y = find_max_y_at_x(text_poly, x)
+            attachment_points = find_top_attachment_points_for_shape(
+                text_poly, ring_outer_rad
+            )
 
-                    ring = translate(
-                        Point(x, midpoint_y).buffer(ring_outer_rad)
-                        - Point(x, midpoint_y).buffer(ring_inner_rad),
-                        yoff=ring_inner_rad,
-                    )
-
-                    text_poly = unary_union([text_poly, ring])
-            else:
-                midpoint_x = text_poly.centroid.x
-                midpoint_y = find_max_y_at_x(text_poly, midpoint_x)
-
+            for p in attachment_points:
                 ring = translate(
-                    Point(midpoint_x, midpoint_y).buffer(ring_outer_rad)
-                    - Point(midpoint_x, midpoint_y).buffer(ring_inner_rad),
+                    Point(p.x, p.y).buffer(ring_outer_rad)
+                    - Point(p.x, p.y).buffer(ring_inner_rad),
                     yoff=ring_inner_rad,
                 )
 
