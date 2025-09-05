@@ -117,7 +117,7 @@ def get_model():
 
     top_ring_model = Model()
     top_ring_shape = Point(0, 0).buffer(bottom_rad + 2)
-    top_ring_shape -= Point(0, 0).buffer(handle_rad + 0.5)
+    top_ring_shape -= Point(0, 0).buffer(screw_rad + 0.5)
 
     for i in range(12):
         a = i * (math.pi * 2 / 12)
