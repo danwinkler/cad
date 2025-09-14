@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>DCAD UI</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            background: #1e1e1e;
+            color: #eee;
+        }
+
+        #root {
+            display: flex;
+            height: 100vh;
+        }
+
+        #sidebar {
+            width: 300px;
+            padding: 10px;
+            background: #252526;
+            overflow: auto;
+        }
+
+        #viewport {
+            flex: 1;
+            position: relative;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .slider-row {
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: 12px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <div id="sidebar">
+            <h3>Joints</h3>
+            <div id="jointControls"></div>
+        </div>
+        <div id="viewport"></div>
+    </div>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "../node_modules/three/build/three.module.js",
+            "three/examples/jsm/": "../node_modules/three/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module" src="../src/renderer.js"></script>
+</body>
+
+</html>

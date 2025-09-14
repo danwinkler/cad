@@ -1,0 +1,17 @@
+{
+    "name": "dcad_ui",
+    "version": "0.1.0",
+    "private": true,
+    "main": "main.js",
+    "type": "module",
+    "scripts": {
+        "start": "electron .",
+        "dev": "electron ."
+    },
+    "devDependencies": {
+        "electron": "28.2.0"
+    },
+    "dependencies": {
+        "three": "0.161.0"
+    }
+}
